@@ -18,14 +18,16 @@
       --black: #000000;
       --white: #ffffff;
       --mint-rgb: 132, 203, 171;
-      --mint-hex: #84cbab;
-      --mint: rgba(var(--mint-rgb), 0.9);
-      --mint-soft: rgba(var(--mint-rgb), 0.26);
+      --mint-solid: #84cbab;
+      --mint: rgba(var(--mint-rgb), 0.82);
+      --mint-soft: rgba(var(--mint-rgb), 0.22);
       --mint-faint: rgba(var(--mint-rgb), 0.08);
-      --mint-flash-strong: rgba(var(--mint-rgb), 0.18);
-      --mint-flash-weak: rgba(var(--mint-rgb), 0.08);
+      --mint-flash-strong: rgba(var(--mint-rgb), 0.16);
+      --mint-flash-weak: rgba(var(--mint-rgb), 0.09);
       --keyboard-offset: 0px;
+      --keyboard-lift: 0px;
       --gray: #5f5d5d;
+      --gray-deep: #4c4b4b;
       --line: rgba(0, 0, 0, 0.16);
       --safe-top: env(safe-area-inset-top, 0px);
       --safe-right: env(safe-area-inset-right, 0px);
@@ -111,6 +113,20 @@
       min-height: 34px;
     }
 
+    .shelf-topbar {
+      display: flex;
+      justify-content: flex-end;
+      min-height: 34px;
+    }
+
+    .shelf-gear-button svg,
+    .mode-button svg,
+    .plain-icon-button svg {
+      width: 18px;
+      height: 18px;
+      display: block;
+    }
+
     .plain-icon-button {
       width: 34px;
       height: 34px;
@@ -137,7 +153,7 @@
       white-space: nowrap;
       overflow: hidden;
       text-overflow: ellipsis;
-      padding-right: 70px;
+      padding-right: 12px;
     }
 
     .search-trigger {
@@ -156,7 +172,7 @@
 
     .search-trigger.compact {
       margin-top: 14px;
-      margin-right: 6px;
+      margin-right: 4px;
     }
 
     .search-trigger-icon {
@@ -254,9 +270,9 @@
     }
 
     .mode-dock {
-      position: fixed;
-      right: calc(16px + var(--safe-right));
-      bottom: calc(110px + var(--safe-bottom));
+      position: absolute;
+      right: calc(12px + var(--safe-right));
+      bottom: calc(136px + var(--safe-bottom));
       display: flex;
       flex-direction: column;
       gap: 16px;
@@ -273,7 +289,7 @@
       align-items: center;
       justify-content: center;
       font-family: "Quicksand", "Helvetica Neue", Arial, sans-serif;
-      font-size: 0.96rem;
+      font-size: 0.92rem;
       line-height: 1;
       padding: 0;
       transition: background-color 160ms ease, transform 160ms ease;
@@ -288,21 +304,14 @@
       transform: scale(0.97);
     }
 
-    .mode-button svg {
-      width: 15px;
-      height: 15px;
-      display: block;
-    }
 
     .word-list {
       flex: 1;
       min-height: 0;
       overflow: auto;
       margin-top: 16px;
-      padding-right: 4px;
-      padding-bottom: 176px;
+      padding-right: 56px;
       border-top: 1px solid var(--line);
-      overscroll-behavior: contain;
     }
 
     .word-item {
@@ -334,7 +343,7 @@
       top: 0;
       right: 0;
       bottom: 0;
-      width: 128px;
+      width: 136px;
       display: flex;
       align-items: stretch;
       justify-content: stretch;
@@ -371,8 +380,7 @@
       padding: 0 2px 0 0;
       background: var(--white);
       transform: translateX(0);
-      transition: transform 180ms cubic-bezier(0.22, 0.61, 0.36, 1);
-      will-change: transform;
+      transition: transform 180ms ease;
     }
 
     .list-page {
@@ -416,7 +424,7 @@
       font-family: "Quicksand", "Helvetica Neue", Arial, sans-serif;
       font-size: 1.35rem;
       line-height: 1;
-      z-index: 9;
+      z-index: 7;
       border: 1px solid transparent;
     }
 
@@ -424,20 +432,21 @@
       transform: translateY(1px);
     }
 
-    #entryView .page-shell {
+    .entry-shell {
       display: flex;
       flex-direction: column;
-      min-height: 100%;
+      padding-bottom: calc(24px + var(--safe-bottom));
+      scroll-padding-bottom: calc(132px + var(--keyboard-offset));
     }
 
     .entry-wrap {
-      flex: 1;
-      min-height: 0;
       display: flex;
       flex-direction: column;
-      gap: 0;
-      padding-top: clamp(22px, 7vh, 44px);
-      padding-bottom: calc(28px + var(--keyboard-offset));
+      gap: 34px;
+      margin-top: clamp(146px, 28vh, 308px);
+      transform: translateY(var(--keyboard-lift));
+      transition: transform 220ms ease;
+      padding-top: 0;
     }
 
     .entry-title {
@@ -448,37 +457,39 @@
 
     .entry-row {
       display: grid;
-      grid-template-columns: 72px minmax(0, 1fr) 26px;
-      gap: 10px;
+      grid-template-columns: 72px minmax(0, 1fr) 28px;
+      gap: 12px;
       align-items: center;
     }
 
     .entry-input {
-      min-height: 52px;
-      border: 1.5px solid var(--black);
-      padding: 0 12px;
+      min-height: 56px;
+      border: 1px solid var(--black);
+      padding: 0 14px;
       background: var(--white);
       color: var(--black);
       font-size: 1.02rem;
       line-height: 1.2;
-      border-radius: 12px;
+      border-radius: 14px;
+    }
+
+    .entry-row .entry-input {
+      border-width: 2px;
     }
 
     .entry-page {
       text-align: center;
       font-family: "Quicksand", "Helvetica Neue", Arial, sans-serif;
-      border-width: 2px;
     }
 
     .entry-word {
       font-size: 1.05rem;
-      border-width: 2px;
     }
 
     .analysis-toggle {
       position: relative;
-      width: 26px;
-      height: 26px;
+      width: 28px;
+      height: 28px;
       display: inline-flex;
       align-items: center;
       justify-content: center;
@@ -494,7 +505,7 @@
     .analysis-toggle-box {
       width: 20px;
       height: 20px;
-      border: 1.5px solid var(--black);
+      border: 1.6px solid var(--black);
       display: inline-flex;
       align-items: center;
       justify-content: center;
@@ -516,14 +527,13 @@
     .entry-actions {
       display: flex;
       justify-content: center;
-      gap: 20px;
-      margin-top: auto;
-      padding-top: 0;
+      gap: 22px;
+      padding-top: 2px;
     }
 
     .entry-button {
-      width: 58px;
-      height: 58px;
+      width: 60px;
+      height: 60px;
       border-radius: 999px;
       background: var(--black);
       color: var(--white);
@@ -582,11 +592,11 @@
     .search-row {
       width: 100%;
       display: grid;
-      grid-template-columns: 54px 52px minmax(0, 1fr);
-      align-items: center;
-      gap: 10px;
-      min-height: 56px;
-      padding: 0 2px 0 0;
+      grid-template-columns: 48px 50px minmax(0, 1fr);
+      align-items: flex-start;
+      gap: 8px 10px;
+      min-height: 64px;
+      padding: 12px 2px 11px 0;
       border-bottom: 1px solid var(--line);
       text-align: left;
       background: var(--white);
@@ -597,22 +607,30 @@
     }
 
     .search-book {
-      width: 38px;
-      height: 38px;
       display: inline-flex;
       align-items: center;
-      justify-content: center;
-      color: var(--mint);
+      justify-content: flex-start;
+      color: var(--mint-solid);
       font-family: "Quicksand", "Helvetica Neue", Arial, sans-serif;
-      font-size: 1.22rem;
+      font-size: 1.28rem;
       font-weight: 700;
       line-height: 1;
+      padding-top: 4px;
     }
 
     .search-page {
-      font-size: 1.02rem;
+      font-size: 1rem;
       color: var(--gray);
       white-space: nowrap;
+      padding-top: 5px;
+    }
+
+    .search-body {
+      min-width: 0;
+      display: flex;
+      flex-direction: column;
+      gap: 4px;
+      padding-right: 8px;
     }
 
     .search-word {
@@ -620,11 +638,81 @@
       line-height: 1.35;
       word-break: break-word;
       color: var(--black);
-      padding-right: 8px;
     }
 
     .search-word.analysis {
       color: var(--gray);
+    }
+
+    .search-meaning {
+      min-height: 1.15em;
+      font-size: 0.78rem;
+      line-height: 1.45;
+      color: var(--gray-deep);
+      white-space: pre-wrap;
+    }
+
+    .search-meaning:empty {
+      display: none;
+    }
+
+    .settings-wrap {
+      display: flex;
+      flex-direction: column;
+      gap: 14px;
+      margin-top: 28px;
+    }
+
+    .settings-title {
+      font-size: 1rem;
+      line-height: 1.2;
+    }
+
+    .settings-label {
+      font-size: 0.95rem;
+      line-height: 1.3;
+    }
+
+    .settings-input {
+      min-height: 52px;
+      border: 1.5px solid var(--black);
+      border-radius: 14px;
+      padding: 0 14px;
+      background: var(--white);
+      color: var(--black);
+      font-size: 0.98rem;
+      line-height: 1.2;
+      font-family: "Quicksand", "Helvetica Neue", Arial, sans-serif;
+    }
+
+    .settings-input::placeholder {
+      color: rgba(0, 0, 0, 0.34);
+    }
+
+    .settings-hint {
+      font-size: 0.84rem;
+      line-height: 1.55;
+      color: var(--gray);
+      white-space: pre-wrap;
+    }
+
+    .settings-save-button {
+      min-height: 48px;
+      border-radius: 999px;
+      background: var(--mint);
+      color: var(--white);
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      font-family: "Quicksand", "Helvetica Neue", Arial, sans-serif;
+      font-size: 1rem;
+      line-height: 1;
+      padding: 0 18px;
+      align-self: flex-start;
+    }
+
+    .settings-save-button:active {
+      transform: translateY(1px);
     }
 
     .modal-overlay {
@@ -715,7 +803,11 @@
       }
 
       .mode-dock {
-        right: max(calc((100vw - 720px) / 2 + 16px), 16px);
+        right: max(calc((100vw - 720px) / 2 + 12px), 12px);
+      }
+
+      .entry-wrap {
+        margin-top: 200px;
       }
 
       .add-word-button {
@@ -745,6 +837,14 @@
   <div id="app">
     <section id="shelfView" class="view active" aria-label="书架页">
       <div class="page-shell">
+        <div class="shelf-topbar">
+          <button id="openSettingsButton" class="plain-icon-button shelf-gear-button" type="button" aria-label="设置">
+            <svg viewBox="0 0 24 24" fill="none" aria-hidden="true">
+              <path d="M12 8.3a3.7 3.7 0 1 0 0 7.4 3.7 3.7 0 0 0 0-7.4Z" stroke="currentColor" stroke-width="1.8"></path>
+              <path d="M19.4 13.2v-2.4l-2-.5a5.7 5.7 0 0 0-.5-1.2l1.1-1.8-1.7-1.7-1.8 1.1c-.4-.2-.8-.4-1.2-.5l-.5-2H10l-.5 2c-.4.1-.8.3-1.2.5L6.5 5.6 4.8 7.3l1.1 1.8c-.2.4-.4.8-.5 1.2l-2 .5v2.4l2 .5c.1.4.3.8.5 1.2l-1.1 1.8 1.7 1.7 1.8-1.1c.4.2.8.4 1.2.5l.5 2h2.4l.5-2c.4-.1.8-.3 1.2-.5l1.8 1.1 1.7-1.7-1.1-1.8c.2-.4.4-.8.5-1.2l2-.5Z" stroke="currentColor" stroke-width="1.6" stroke-linejoin="round"></path>
+            </svg>
+          </button>
+        </div>
         <button id="shelfSearchTrigger" class="search-trigger" type="button" aria-label="搜索全部笔记本">
           <svg class="search-trigger-icon" viewBox="0 0 24 24" fill="none" aria-hidden="true">
             <circle cx="10.5" cy="10.5" r="5.5" stroke="currentColor" stroke-width="2"></circle>
@@ -801,7 +901,7 @@
     </section>
 
     <section id="entryView" class="view" aria-label="录入界面">
-      <div class="page-shell">
+      <div class="page-shell entry-shell">
         <div id="entryNotebookTitle" class="entry-title"></div>
 
         <div class="entry-wrap">
@@ -840,6 +940,32 @@
             <button id="entrySaveButton" class="entry-button" type="button" aria-label="保存">✓</button>
             <button id="entrySaveNextButton" class="entry-button" type="button" aria-label="保存并下一页">→</button>
           </div>
+        </div>
+      </div>
+    </section>
+
+    <section id="settingsView" class="view" aria-label="设置页">
+      <div class="page-shell">
+        <div class="header-row">
+          <button id="settingsBackButton" class="plain-icon-button" type="button" aria-label="返回">←</button>
+          <div class="settings-title">设置</div>
+        </div>
+        <div class="settings-wrap">
+          <div class="settings-label">API key</div>
+          <input
+            id="apiKeyInput"
+            class="settings-input"
+            type="password"
+            autocapitalize="none"
+            autocorrect="off"
+            spellcheck="false"
+            autocomplete="off"
+            placeholder="sk-..."
+            aria-label="API key"
+          />
+          <div class="settings-hint">Base URL: https://api.siliconflow.cn/v1
+Model: Qwen/Qwen3-8B</div>
+          <button id="settingsSaveButton" class="settings-save-button" type="button">保存</button>
         </div>
       </div>
     </section>
@@ -918,10 +1044,7 @@
       const DB_VERSION = 1;
       const APP_STATE_ID = "main";
       const MAX_NOTEBOOKS = 30;
-      const SWIPE_WIDTH = 128;
-      const SWIPE_OPEN_RATIO = 0.38;
-      const SWIPE_KEEP_RATIO = 0.22;
-      const SWIPE_VELOCITY = 0.32;
+      const SWIPE_WIDTH = 136;
 
       const state = {
         db: null,
@@ -934,7 +1057,11 @@
         searchOrigin: "shelf",
         pendingHighlightWordId: null,
         editingWordId: null,
-        modalResolver: null
+        modalResolver: null,
+        searchMeaningController: null,
+        searchMeaningTimer: null,
+        searchMeaningToken: 0,
+        viewportBaseHeight: window.innerHeight || 0
       };
 
       const els = {};
@@ -945,7 +1072,6 @@
       async function init() {
         cacheElements();
         setupAppChrome();
-        setupViewportTracking();
         bindStaticEvents();
 
         try {
@@ -967,6 +1093,7 @@
         els.shelfView = document.getElementById("shelfView");
         els.listView = document.getElementById("listView");
         els.entryView = document.getElementById("entryView");
+        els.settingsView = document.getElementById("settingsView");
         els.searchView = document.getElementById("searchView");
 
         els.shelfGrid = document.getElementById("shelfGrid");
@@ -977,6 +1104,10 @@
         els.listSearchTrigger = document.getElementById("listSearchTrigger");
         els.searchInput = document.getElementById("searchInput");
         els.searchBackButton = document.getElementById("searchBackButton");
+        els.openSettingsButton = document.getElementById("openSettingsButton");
+        els.settingsBackButton = document.getElementById("settingsBackButton");
+        els.apiKeyInput = document.getElementById("apiKeyInput");
+        els.settingsSaveButton = document.getElementById("settingsSaveButton");
 
         els.backToShelfButton = document.getElementById("backToShelfButton");
         els.addWordButton = document.getElementById("addWordButton");
@@ -1065,6 +1196,9 @@
         els.shelfSearchTrigger.addEventListener("click", () => openSearch("shelf"));
         els.listSearchTrigger.addEventListener("click", () => openSearch("list"));
         els.searchBackButton.addEventListener("click", handleSearchBack);
+        els.openSettingsButton.addEventListener("click", openSettings);
+        els.settingsBackButton.addEventListener("click", openShelf);
+        els.settingsSaveButton.addEventListener("click", saveSettings);
 
         els.backToShelfButton.addEventListener("click", () => {
           openShelf();
@@ -1082,7 +1216,12 @@
         els.entrySaveNextButton.addEventListener("click", () => handleEntrySave("next"));
 
         els.searchInput.addEventListener("input", renderSearchResults);
-        els.wordList.addEventListener("scroll", () => closeAllSwipes(), { passive: true });
+        els.apiKeyInput.addEventListener("keydown", (event) => {
+          if (event.key === "Enter") {
+            event.preventDefault();
+            saveSettings();
+          }
+        });
 
         [els.entryPageInput, els.editPageInput].forEach((input) => {
           input.addEventListener("input", () => {
@@ -1151,29 +1290,18 @@
             closeEditModal();
           }
         });
-      }
 
-      function setupViewportTracking() {
-        const applyViewportInsets = () => {
-          const viewport = window.visualViewport;
-          let keyboardOffset = 0;
+        els.wordList.addEventListener("scroll", () => {
+          closeAllSwipes();
+        }, { passive: true });
 
-          if (viewport) {
-            const hiddenHeight = window.innerHeight - viewport.height - viewport.offsetTop;
-            keyboardOffset = Math.max(0, Math.round(hiddenHeight));
+        window.addEventListener("online", () => {
+          if (state.currentView === "search" && els.searchInput.value.trim()) {
+            renderSearchResults();
           }
+        });
 
-          document.documentElement.style.setProperty("--keyboard-offset", `${keyboardOffset}px`);
-        };
-
-        applyViewportInsets();
-
-        if (window.visualViewport) {
-          window.visualViewport.addEventListener("resize", applyViewportInsets);
-          window.visualViewport.addEventListener("scroll", applyViewportInsets);
-        }
-
-        window.addEventListener("resize", applyViewportInsets);
+        bindViewportWatch();
       }
 
       async function restoreApp() {
@@ -1257,6 +1385,17 @@
         });
       }
 
+      async function openSettings() {
+        state.currentView = "settings";
+        showView("settings");
+        const appState = await getAppState();
+        els.apiKeyInput.value = appState.apiKey || "";
+        requestAnimationFrame(() => {
+          els.apiKeyInput.focus();
+          els.apiKeyInput.setSelectionRange(els.apiKeyInput.value.length, els.apiKeyInput.value.length);
+        });
+      }
+
       function openSearch(origin) {
         state.searchOrigin = origin;
         state.currentView = "search";
@@ -1279,10 +1418,15 @@
       }
 
       function showView(name) {
+        if (name !== "search") {
+          cancelMeaningRequests();
+        }
+
         const views = {
           shelf: els.shelfView,
           list: els.listView,
           entry: els.entryView,
+          settings: els.settingsView,
           search: els.searchView
         };
 
@@ -1467,9 +1611,11 @@
       }
 
       // 全局搜索：在全部笔记本内实时筛选，点击结果后跳转并定位。
-      function renderSearchResults() {
-        const query = els.searchInput.value.trim().toLowerCase();
+      async function renderSearchResults() {
+        const rawQuery = els.searchInput.value.trim();
+        const query = rawQuery.toLowerCase();
         els.searchResults.innerHTML = "";
+        cancelMeaningRequests();
 
         if (!query) {
           els.searchResults.innerHTML = '<div class="empty-block"></div>';
@@ -1499,15 +1645,43 @@
             return a.createdAt - b.createdAt;
           });
 
+        const meaningTargets = new Map();
+
         results.forEach((result) => {
           const row = document.createElement("button");
           row.type = "button";
           row.className = "search-row " + (result.isAnalysis ? "analysis" : "main");
-          row.innerHTML = `
-            <div class="search-book">${escapeHtml(String(result.notebook.order))}</div>
-            <div class="search-page">${escapeHtml(String(result.page))}</div>
-            <div class="search-word ${result.isAnalysis ? "analysis" : ""}">${escapeHtml(result.word)}</div>
-          `;
+
+          const book = document.createElement("div");
+          book.className = "search-book";
+          book.textContent = String(result.notebook.order);
+
+          const page = document.createElement("div");
+          page.className = "search-page";
+          page.textContent = String(result.page);
+
+          const body = document.createElement("div");
+          body.className = "search-body";
+
+          const word = document.createElement("div");
+          word.className = "search-word" + (result.isAnalysis ? " analysis" : "");
+          word.textContent = result.word;
+
+          const meaning = document.createElement("div");
+          meaning.className = "search-meaning";
+
+          body.appendChild(word);
+          body.appendChild(meaning);
+          row.appendChild(book);
+          row.appendChild(page);
+          row.appendChild(body);
+
+          const wordKey = normalizeMeaningKey(result.word);
+          if (!meaningTargets.has(wordKey)) {
+            meaningTargets.set(wordKey, []);
+          }
+          meaningTargets.get(wordKey).push(meaning);
+
           row.addEventListener("click", async () => {
             els.searchInput.blur();
             await openNotebook(result.notebookId, {
@@ -1521,6 +1695,163 @@
 
         if (!results.length) {
           els.searchResults.innerHTML = '<div class="empty-block"></div>';
+          return;
+        }
+
+        scheduleSearchMeanings(rawQuery, meaningTargets, ++state.searchMeaningToken);
+      }
+
+      async function saveSettings() {
+        const apiKey = String(els.apiKeyInput.value || "")
+          .trim()
+          .replace(/^Bearer\s+/i, "");
+
+        await saveAppState({ apiKey });
+        const button = els.settingsSaveButton;
+        const prevText = button.textContent;
+        button.textContent = "已保存";
+        button.disabled = true;
+        window.setTimeout(() => {
+          button.textContent = prevText;
+          button.disabled = false;
+        }, 900);
+      }
+
+      function bindViewportWatch() {
+        const viewport = window.visualViewport;
+
+        const update = () => {
+          const currentHeight = viewport
+            ? viewport.height + viewport.offsetTop
+            : window.innerHeight;
+
+          if (currentHeight > state.viewportBaseHeight - 80) {
+            state.viewportBaseHeight = Math.max(state.viewportBaseHeight, currentHeight);
+          }
+
+          const keyboardOffset = Math.max(0, state.viewportBaseHeight - currentHeight);
+          const keyboardOpen = keyboardOffset > 120;
+          const lift = keyboardOpen ? -Math.min(210, Math.round(keyboardOffset * 0.58)) : 0;
+
+          document.documentElement.style.setProperty("--keyboard-offset", `${keyboardOffset}px`);
+          document.documentElement.style.setProperty("--keyboard-lift", `${lift}px`);
+        };
+
+        if (viewport) {
+          viewport.addEventListener("resize", update);
+          viewport.addEventListener("scroll", update);
+        }
+
+        window.addEventListener("orientationchange", () => {
+          window.setTimeout(() => {
+            state.viewportBaseHeight = Math.max(window.innerHeight || 0, state.viewportBaseHeight);
+            update();
+          }, 180);
+        });
+
+        window.addEventListener("resize", update);
+        update();
+      }
+
+      function cancelMeaningRequests() {
+        if (state.searchMeaningTimer) {
+          clearTimeout(state.searchMeaningTimer);
+          state.searchMeaningTimer = null;
+        }
+        if (state.searchMeaningController) {
+          state.searchMeaningController.abort();
+          state.searchMeaningController = null;
+        }
+      }
+
+      function normalizeMeaningKey(word) {
+        return String(word || "").trim().toLowerCase();
+      }
+
+      function scheduleSearchMeanings(query, meaningTargets, token) {
+        if (!navigator.onLine) {
+          return;
+        }
+
+        state.searchMeaningTimer = window.setTimeout(async () => {
+          const appState = await getAppState();
+          const apiKey = String(appState.apiKey || "").trim();
+          if (!apiKey || token !== state.searchMeaningToken || state.currentView !== "search") {
+            return;
+          }
+
+          const controller = new AbortController();
+          state.searchMeaningController = controller;
+
+          const words = Array.from(meaningTargets.keys()).filter(Boolean);
+          const limit = 2;
+          let cursor = 0;
+
+          const worker = async () => {
+            while (cursor < words.length) {
+              const index = cursor;
+              cursor += 1;
+              const wordKey = words[index];
+              if (!wordKey || controller.signal.aborted || token !== state.searchMeaningToken) {
+                return;
+              }
+              const meaning = await fetchWordMeaning(wordKey, apiKey, controller.signal);
+              if (!meaning || controller.signal.aborted || token !== state.searchMeaningToken) {
+                continue;
+              }
+              const nodes = meaningTargets.get(wordKey) || [];
+              nodes.forEach((node) => {
+                node.textContent = meaning;
+              });
+            }
+          };
+
+          await Promise.all(Array.from({ length: Math.min(limit, words.length) }, () => worker()));
+
+          if (state.searchMeaningController === controller) {
+            state.searchMeaningController = null;
+          }
+        }, 320);
+      }
+
+      async function fetchWordMeaning(word, apiKey, signal) {
+        if (!word || !apiKey) {
+          return "";
+        }
+
+        const prompt = `请用简短的中文解释以下英文单词的常用含义，每个词性一行，格式为'词性.释义'，只列常用词性，每个释义不超过10个字。示例：
+n.海葵
+v.固着生长
+单词：${word}`;
+
+        try {
+          const response = await fetch("https://api.siliconflow.cn/v1/chat/completions", {
+            method: "POST",
+            headers: {
+              "Content-Type": "application/json",
+              Authorization: `Bearer ${apiKey}`
+            },
+            body: JSON.stringify({
+              model: "Qwen/Qwen3-8B",
+              messages: [{ role: "user", content: prompt }],
+              temperature: 0.3
+            }),
+            signal
+          });
+
+          if (!response.ok) {
+            return "";
+          }
+
+          const data = await response.json();
+          const content = String(data?.choices?.[0]?.message?.content || "")
+            .replace(/\r/g, "")
+            .replace(/^[-•\d.\s]+/gm, "")
+            .trim();
+
+          return content;
+        } catch (error) {
+          return "";
         }
       }
 
@@ -1625,67 +1956,42 @@
         return list.sort((a, b) => b.createdAt - a.createdAt);
       }
 
-      // 优化左滑交互：增加方向锁、速度判断与边界阻尼，减少误触。
+      // 左滑交互：增加方向锁、速度判断和边缘阻尼，减少误触并提升打开成功率。
       function setupSwipe(item) {
         const content = item.querySelector(".swipe-content");
         let startX = 0;
         let startY = 0;
-        let baseOffset = 0;
-        let currentOffset = 0;
+        let startOffset = 0;
         let dragging = false;
         let pointerId = null;
         let axis = null;
-        let captured = false;
-        let moved = false;
-        let velocityX = 0;
         let lastX = 0;
         let lastTime = 0;
+        let velocityX = 0;
+        let moved = false;
 
-        const applyResistance = (value) => {
-          if (value > 0) {
-            return value * 0.24;
+        const getOffset = () => Number(item.dataset.offset || "0");
+
+        const setOffset = (value, withTransition) => {
+          let next = value;
+          if (next > 0) {
+            next *= 0.18;
           }
-          if (value < -SWIPE_WIDTH) {
-            return -SWIPE_WIDTH + (value + SWIPE_WIDTH) * 0.24;
+          if (next < -SWIPE_WIDTH) {
+            next = -SWIPE_WIDTH + (next + SWIPE_WIDTH) * 0.22;
           }
-          return value;
+          if (withTransition) {
+            next = Math.max(-SWIPE_WIDTH, Math.min(0, next));
+          }
+          item.dataset.offset = String(next);
+          content.style.transition = withTransition ? "transform 180ms ease" : "none";
+          content.style.transform = `translateX(${next}px)`;
         };
 
-        const clampOffset = (value) => Math.max(-SWIPE_WIDTH, Math.min(0, value));
-
-        const renderOffset = (value, withTransition = false, allowResistance = false) => {
-          const clamped = clampOffset(value);
-          currentOffset = clamped;
-          item.dataset.offset = String(clamped);
-          content.style.transition = withTransition
-            ? "transform 180ms cubic-bezier(0.22, 0.61, 0.36, 1)"
-            : "none";
-          const visibleOffset = allowResistance ? applyResistance(value) : clamped;
-          content.style.transform = `translateX(${visibleOffset}px)`;
-        };
-
-        const finishDrag = () => {
-          const wasOpen = baseOffset <= -SWIPE_WIDTH * 0.5;
-          const openThreshold = wasOpen ? SWIPE_WIDTH * SWIPE_KEEP_RATIO : SWIPE_WIDTH * SWIPE_OPEN_RATIO;
-
-          let target = 0;
-          if (velocityX <= -SWIPE_VELOCITY) {
-            target = -SWIPE_WIDTH;
-          } else if (velocityX >= SWIPE_VELOCITY) {
-            target = 0;
-          } else if (currentOffset <= -openThreshold) {
-            target = -SWIPE_WIDTH;
-          }
-
-          renderOffset(target, true, false);
-        };
-
-        const resetGesture = () => {
-          dragging = false;
-          pointerId = null;
-          axis = null;
-          captured = false;
-          baseOffset = currentOffset;
+        const finish = (target) => {
+          item.dataset.offset = String(target);
+          content.style.transition = "transform 180ms ease";
+          content.style.transform = `translateX(${target}px)`;
         };
 
         content.addEventListener("pointerdown", (event) => {
@@ -1698,18 +2004,20 @@
 
           closeAllSwipes(item);
           dragging = true;
+          moved = false;
           pointerId = event.pointerId;
           axis = null;
-          captured = false;
-          moved = false;
           startX = event.clientX;
           startY = event.clientY;
-          baseOffset = clampOffset(Number(item.dataset.offset || "0"));
-          currentOffset = baseOffset;
+          startOffset = getOffset();
           lastX = event.clientX;
-          lastTime = event.timeStamp || Date.now();
+          lastTime = performance.now();
           velocityX = 0;
-          content.dataset.dragged = "0";
+          content.style.willChange = "transform";
+
+          if (content.setPointerCapture) {
+            content.setPointerCapture(pointerId);
+          }
         });
 
         content.addEventListener("pointermove", (event) => {
@@ -1721,82 +2029,70 @@
           const deltaY = event.clientY - startY;
 
           if (!axis) {
-            const absX = Math.abs(deltaX);
-            const absY = Math.abs(deltaY);
-
-            if (absX < 7 && absY < 7) {
+            if (Math.abs(deltaX) < 5 && Math.abs(deltaY) < 5) {
               return;
             }
-
-            if (absX > absY + 5 && absX > 8) {
-              axis = "x";
-              if (content.setPointerCapture) {
-                content.setPointerCapture(pointerId);
-                captured = true;
-              }
-            } else if (absY > absX + 5 && absY > 8) {
-              resetGesture();
-              return;
-            } else {
-              return;
-            }
+            axis = Math.abs(deltaX) > Math.abs(deltaY) * 1.14 ? "x" : "y";
           }
 
           if (axis !== "x") {
             return;
           }
 
+          moved = true;
           event.preventDefault();
-          moved = moved || Math.abs(deltaX) > 10;
-
-          const now = event.timeStamp || Date.now();
-          const dt = Math.max(1, now - lastTime);
+          const now = performance.now();
+          const dt = Math.max(16, now - lastTime);
           velocityX = (event.clientX - lastX) / dt;
           lastX = event.clientX;
           lastTime = now;
-
-          renderOffset(baseOffset + deltaX, false, true);
+          setOffset(startOffset + deltaX, false);
         });
 
         const endDrag = (event) => {
-          if (event.pointerId !== pointerId) {
+          if (!dragging || event.pointerId !== pointerId) {
             return;
           }
 
-          const activeDrag = dragging;
-          if (captured && content.releasePointerCapture) {
+          dragging = false;
+          content.style.willChange = "";
+          if (content.releasePointerCapture) {
             content.releasePointerCapture(pointerId);
           }
 
-          content.dataset.dragged = moved ? "1" : "0";
-          if (activeDrag && axis === "x") {
-            finishDrag();
-          } else {
-            renderOffset(currentOffset, true, false);
+          if (axis !== "x") {
+            finish(startOffset < -SWIPE_WIDTH / 2 ? -SWIPE_WIDTH : 0);
+            pointerId = null;
+            axis = null;
+            return;
           }
 
-          resetGesture();
+          const offset = getOffset();
+          const shouldOpen = offset < -SWIPE_WIDTH * 0.36 || velocityX < -0.28;
+          const shouldClose = offset > -SWIPE_WIDTH * 0.18 || velocityX > 0.24;
+          finish(shouldOpen && !shouldClose ? -SWIPE_WIDTH : 0);
+
+          pointerId = null;
+          axis = null;
         };
 
         content.addEventListener("pointerup", endDrag);
         content.addEventListener("pointercancel", endDrag);
 
         content.addEventListener("click", (event) => {
-          if (content.dataset.dragged === "1") {
-            content.dataset.dragged = "0";
-            event.preventDefault();
-            event.stopPropagation();
+          if (moved) {
+            moved = false;
             return;
           }
-
-          if (currentOffset < -8) {
+          const offset = getOffset();
+          if (offset < -8) {
             event.preventDefault();
             event.stopPropagation();
-            renderOffset(0, true, false);
+            finish(0);
           }
         });
 
-        renderOffset(0, true, false);
+        finish(0);
       }
 
       function closeAllSwipes(exceptItem = null) {
@@ -1806,7 +2102,7 @@
           if (content) {
             item.dataset.offset = "0";
             content.style.transform = "translateX(0)";
-            content.style.transition = "transform 180ms cubic-bezier(0.22, 0.61, 0.36, 1)";
+            content.style.transition = "transform 180ms ease";
           }
         });
       }
@@ -2073,7 +2369,8 @@
             id: APP_STATE_ID,
             lastNotebookId: null,
             lastSortMode: "page",
-            lastFilterMode: "mainOnly"
+            lastFilterMode: "mainOnly",
+            apiKey: ""
           });
         }
       }
@@ -2084,7 +2381,8 @@
             id: APP_STATE_ID,
             lastNotebookId: null,
             lastSortMode: "page",
-            lastFilterMode: "mainOnly"
+            lastFilterMode: "mainOnly",
+            apiKey: ""
           }
         );
       }
