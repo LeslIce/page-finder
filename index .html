@@ -1,0 +1,2004 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8" />
+  <meta
+    name="viewport"
+    content="width=device-width, initial-scale=1, viewport-fit=cover, user-scalable=no"
+  />
+  <meta name="theme-color" content="#54bc8b" />
+  <meta name="apple-mobile-web-app-capable" content="yes" />
+  <meta name="apple-mobile-web-app-status-bar-style" content="default" />
+  <meta name="apple-mobile-web-app-title" content="单词本" />
+  <title>单词笔记本</title>
+  <style>
+    @import url('https://fonts.googleapis.com/css2?family=Lora:wght@400;500;600&family=Quicksand:wght@500;700&display=swap');
+
+    :root {
+      --black: #000000;
+      --white: #ffffff;
+      --mint: #54bc8b;
+      --mint-faint: rgba(84, 188, 139, 0.09);
+      --gray: #5f5d5d;
+      --line: rgba(0, 0, 0, 0.16);
+      --safe-top: env(safe-area-inset-top, 0px);
+      --safe-right: env(safe-area-inset-right, 0px);
+      --safe-bottom: env(safe-area-inset-bottom, 0px);
+      --safe-left: env(safe-area-inset-left, 0px);
+    }
+
+    * {
+      box-sizing: border-box;
+      -webkit-tap-highlight-color: transparent;
+    }
+
+    html,
+    body {
+      height: 100%;
+      margin: 0;
+      background: var(--white);
+      color: var(--black);
+      overflow: hidden;
+      font-family: "Lora", "Times New Roman", Georgia, serif;
+    }
+
+    body {
+      -webkit-font-smoothing: antialiased;
+      text-rendering: optimizeLegibility;
+    }
+
+    button,
+    input {
+      border: 0;
+      outline: none;
+      background: none;
+      font: inherit;
+      color: inherit;
+    }
+
+    button {
+      cursor: pointer;
+      touch-action: manipulation;
+    }
+
+    input::placeholder {
+      color: rgba(255, 255, 255, 0.8);
+    }
+
+    #app {
+      position: fixed;
+      inset: 0;
+      background: var(--white);
+      overflow: hidden;
+    }
+
+    .view {
+      position: absolute;
+      inset: 0;
+      display: none;
+      flex-direction: column;
+      background: var(--white);
+    }
+
+    .view.active {
+      display: flex;
+    }
+
+    .page-shell {
+      flex: 1;
+      min-height: 0;
+      overflow: auto;
+      padding-left: calc(18px + var(--safe-left));
+      padding-right: calc(18px + var(--safe-right));
+      padding-bottom: calc(22px + var(--safe-bottom));
+      padding-top: calc(16px + var(--safe-top));
+    }
+
+    .page-shell.with-bottom-button {
+      padding-bottom: calc(98px + var(--safe-bottom));
+    }
+
+    .header-row {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      min-height: 34px;
+    }
+
+    .plain-icon-button {
+      width: 34px;
+      height: 34px;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      border: 1px solid transparent;
+      color: var(--black);
+      font-family: "Quicksand", "Helvetica Neue", Arial, sans-serif;
+      font-size: 23px;
+      line-height: 1;
+      padding: 0;
+      flex: 0 0 auto;
+    }
+
+    .plain-icon-button:active {
+      border-color: var(--line);
+    }
+
+    .notebook-title {
+      min-width: 0;
+      font-size: 1.02rem;
+      line-height: 1.25;
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+      padding-right: 70px;
+    }
+
+    .search-trigger {
+      width: 100%;
+      min-height: 46px;
+      display: flex;
+      align-items: center;
+      justify-content: flex-start;
+      gap: 10px;
+      background: var(--mint);
+      color: var(--white);
+      border-radius: 16px;
+      padding: 0 16px;
+      margin-top: 12px;
+    }
+
+    .search-trigger.compact {
+      margin-top: 14px;
+      margin-right: 64px;
+    }
+
+    .search-trigger-icon {
+      width: 18px;
+      height: 18px;
+      flex: 0 0 auto;
+    }
+
+    .search-trigger-ghost {
+      flex: 1;
+      height: 1px;
+      background: rgba(255, 255, 255, 0.52);
+    }
+
+    .shelf-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(78px, 1fr));
+      gap: 22px 18px;
+      padding-top: 20px;
+      align-content: start;
+    }
+
+    .book-item {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 7px;
+      user-select: none;
+      -webkit-user-select: none;
+      touch-action: manipulation;
+    }
+
+    .book-figure {
+      width: 78px;
+      height: 118px;
+      position: relative;
+      color: var(--black);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+
+    .book-svg {
+      width: 100%;
+      height: 100%;
+      display: block;
+    }
+
+    .book-order {
+      position: absolute;
+      inset: 0;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 2rem;
+      line-height: 1;
+      padding-right: 6px;
+      font-weight: 500;
+      pointer-events: none;
+    }
+
+    .book-caption {
+      font-size: 0.78rem;
+      line-height: 1.15;
+      color: var(--black);
+      text-align: center;
+      min-height: 1.8em;
+    }
+
+    .book-plus {
+      width: 78px;
+      height: 118px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-family: "Quicksand", "Helvetica Neue", Arial, sans-serif;
+      font-size: 2.5rem;
+      line-height: 1;
+      color: var(--black);
+      border: 1px solid var(--line);
+      border-radius: 18px;
+    }
+
+    .shelf-spacer {
+      min-height: 8px;
+    }
+
+    #listView {
+      position: absolute;
+      inset: 0;
+    }
+
+    #listShell {
+      position: relative;
+    }
+
+    .mode-dock {
+      position: absolute;
+      right: calc(10px + var(--safe-right));
+      top: calc(74px + var(--safe-top));
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+      z-index: 8;
+    }
+
+    .mode-button {
+      width: 42px;
+      height: 42px;
+      border-radius: 999px;
+      background: rgba(84, 188, 139, 0.36);
+      color: var(--white);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-family: "Quicksand", "Helvetica Neue", Arial, sans-serif;
+      font-size: 1rem;
+      line-height: 1;
+      padding: 0;
+      transition: background-color 160ms ease, transform 160ms ease;
+      border: 1px solid transparent;
+    }
+
+    .mode-button.active {
+      background: var(--mint);
+    }
+
+    .mode-button:active {
+      transform: scale(0.97);
+    }
+
+    .mode-button svg {
+      width: 18px;
+      height: 18px;
+      display: block;
+    }
+
+    .word-list {
+      flex: 1;
+      min-height: 0;
+      overflow: auto;
+      margin-top: 16px;
+      padding-right: 64px;
+      border-top: 1px solid var(--line);
+    }
+
+    .word-item {
+      position: relative;
+      overflow: hidden;
+      border-bottom: 1px solid var(--line);
+      background: var(--white);
+      touch-action: pan-y;
+    }
+
+    .word-item.flash-highlight .swipe-content {
+      animation: flash-row 1.25s ease;
+    }
+
+    @keyframes flash-row {
+      0% {
+        background: rgba(84, 188, 139, 0.25);
+      }
+      55% {
+        background: rgba(84, 188, 139, 0.12);
+      }
+      100% {
+        background: transparent;
+      }
+    }
+
+    .swipe-actions {
+      position: absolute;
+      top: 0;
+      right: 0;
+      bottom: 0;
+      width: 136px;
+      display: flex;
+      align-items: stretch;
+      justify-content: stretch;
+    }
+
+    .row-action {
+      flex: 1 1 50%;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      font-family: "Quicksand", "Helvetica Neue", Arial, sans-serif;
+      font-size: 0.92rem;
+      line-height: 1;
+      color: var(--white);
+    }
+
+    .row-action.edit {
+      background: var(--mint);
+    }
+
+    .row-action.delete {
+      background: var(--black);
+    }
+
+    .swipe-content {
+      position: relative;
+      z-index: 1;
+      width: 100%;
+      min-height: 56px;
+      display: grid;
+      grid-template-columns: auto 1fr;
+      align-items: center;
+      gap: 14px;
+      padding: 0 2px 0 0;
+      background: var(--white);
+      transform: translateX(0);
+      transition: transform 180ms ease;
+    }
+
+    .list-page {
+      min-width: 66px;
+      padding-left: 2px;
+      font-size: 0.96rem;
+      letter-spacing: 0.02em;
+      color: var(--black);
+      white-space: nowrap;
+    }
+
+    .list-word {
+      min-width: 0;
+      font-size: 1.05rem;
+      line-height: 1.35;
+      padding-right: 10px;
+      word-break: break-word;
+      color: var(--black);
+    }
+
+    .list-word.analysis {
+      color: var(--gray);
+    }
+
+    .empty-block {
+      min-height: 34vh;
+    }
+
+    .add-word-button {
+      position: absolute;
+      left: calc(18px + var(--safe-left));
+      right: calc(18px + var(--safe-right));
+      bottom: calc(18px + var(--safe-bottom));
+      min-height: 52px;
+      border-radius: 999px;
+      background: var(--mint);
+      color: var(--white);
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      font-family: "Quicksand", "Helvetica Neue", Arial, sans-serif;
+      font-size: 1.35rem;
+      line-height: 1;
+      z-index: 7;
+      border: 1px solid transparent;
+    }
+
+    .add-word-button:active {
+      transform: translateY(1px);
+    }
+
+    .entry-wrap {
+      display: flex;
+      flex-direction: column;
+      gap: 24px;
+      padding-top: 14px;
+    }
+
+    .entry-title {
+      font-size: 1rem;
+      line-height: 1.2;
+      color: var(--black);
+    }
+
+    .entry-row {
+      display: grid;
+      grid-template-columns: 72px minmax(0, 1fr) 26px;
+      gap: 10px;
+      align-items: center;
+    }
+
+    .entry-input {
+      min-height: 52px;
+      border: 1px solid var(--black);
+      padding: 0 12px;
+      background: var(--white);
+      color: var(--black);
+      font-size: 1.02rem;
+      line-height: 1.2;
+      border-radius: 12px;
+    }
+
+    .entry-page {
+      text-align: center;
+      font-family: "Quicksand", "Helvetica Neue", Arial, sans-serif;
+    }
+
+    .entry-word {
+      font-size: 1.05rem;
+    }
+
+    .analysis-toggle {
+      position: relative;
+      width: 26px;
+      height: 26px;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+    }
+
+    .analysis-toggle input {
+      position: absolute;
+      opacity: 0;
+      inset: 0;
+      margin: 0;
+    }
+
+    .analysis-toggle-box {
+      width: 20px;
+      height: 20px;
+      border: 1.5px solid var(--black);
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      background: var(--white);
+    }
+
+    .analysis-toggle input:checked + .analysis-toggle-box {
+      background: var(--black);
+    }
+
+    .analysis-toggle input:checked + .analysis-toggle-box::after {
+      content: "";
+      width: 8px;
+      height: 8px;
+      background: var(--white);
+      display: block;
+    }
+
+    .entry-actions {
+      display: flex;
+      justify-content: center;
+      gap: 18px;
+      padding-top: 2px;
+    }
+
+    .entry-button {
+      width: 58px;
+      height: 58px;
+      border-radius: 999px;
+      background: var(--black);
+      color: var(--white);
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      font-family: "Quicksand", "Helvetica Neue", Arial, sans-serif;
+      font-size: 1.3rem;
+      line-height: 1;
+      transition: transform 130ms ease, opacity 130ms ease, background-color 130ms ease;
+    }
+
+    .entry-button.flash {
+      background: var(--mint);
+    }
+
+    .entry-button:disabled {
+      opacity: 0.32;
+      pointer-events: none;
+    }
+
+    .entry-button:active {
+      transform: scale(0.97);
+    }
+
+    .search-header {
+      display: grid;
+      grid-template-columns: 34px 1fr;
+      gap: 12px;
+      align-items: center;
+    }
+
+    .search-input {
+      min-height: 46px;
+      border-radius: 16px;
+      background: var(--mint);
+      color: var(--white);
+      padding: 0 15px;
+      font-size: 1rem;
+      line-height: 1.2;
+      caret-color: var(--white);
+      font-family: "Quicksand", "Helvetica Neue", Arial, sans-serif;
+    }
+
+    .search-input::-webkit-search-cancel-button {
+      -webkit-appearance: none;
+      appearance: none;
+      display: none;
+    }
+
+    .search-results {
+      margin-top: 16px;
+      border-top: 1px solid var(--line);
+    }
+
+    .search-row {
+      width: 100%;
+      display: grid;
+      grid-template-columns: 40px 44px minmax(0, 1fr);
+      align-items: center;
+      gap: 10px;
+      min-height: 56px;
+      padding: 0 2px 0 0;
+      border-bottom: 1px solid var(--line);
+      text-align: left;
+      background: var(--white);
+    }
+
+    .search-row.main {
+      background: var(--mint-faint);
+    }
+
+    .search-book {
+      width: 32px;
+      height: 32px;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      color: var(--mint);
+      font-family: "Quicksand", "Helvetica Neue", Arial, sans-serif;
+      font-size: 1rem;
+      line-height: 1;
+    }
+
+    .search-page {
+      font-size: 0.9rem;
+      color: var(--gray);
+      white-space: nowrap;
+    }
+
+    .search-word {
+      font-size: 1.02rem;
+      line-height: 1.35;
+      word-break: break-word;
+      color: var(--black);
+      padding-right: 8px;
+    }
+
+    .search-word.analysis {
+      color: var(--gray);
+    }
+
+    .modal-overlay {
+      position: fixed;
+      inset: 0;
+      display: none;
+      align-items: center;
+      justify-content: center;
+      padding: calc(24px + var(--safe-top)) calc(20px + var(--safe-right)) calc(24px + var(--safe-bottom)) calc(20px + var(--safe-left));
+      background: rgba(255, 255, 255, 0.84);
+      z-index: 50;
+    }
+
+    .modal-overlay.show {
+      display: flex;
+    }
+
+    .modal-card {
+      width: min(100%, 360px);
+      border: 1px solid var(--black);
+      background: var(--white);
+      padding: 18px 16px 16px;
+    }
+
+    .modal-title {
+      font-size: 1rem;
+      line-height: 1.35;
+      margin-bottom: 8px;
+    }
+
+    .modal-text {
+      font-size: 0.95rem;
+      line-height: 1.5;
+      min-height: 1.5em;
+      white-space: pre-wrap;
+    }
+
+    .modal-buttons {
+      display: flex;
+      gap: 10px;
+      justify-content: flex-end;
+      flex-wrap: wrap;
+      margin-top: 18px;
+    }
+
+    .modal-button {
+      min-width: 78px;
+      min-height: 38px;
+      padding: 0 14px;
+      border-radius: 999px;
+      font-family: "Quicksand", "Helvetica Neue", Arial, sans-serif;
+      font-size: 0.92rem;
+      line-height: 1;
+      border: 1px solid var(--black);
+      color: var(--black);
+      background: var(--white);
+    }
+
+    .modal-button.dark {
+      background: var(--black);
+      color: var(--white);
+      border-color: var(--black);
+    }
+
+    .modal-button.mint {
+      background: var(--mint);
+      color: var(--white);
+      border-color: var(--mint);
+    }
+
+    .edit-grid {
+      display: grid;
+      grid-template-columns: 72px minmax(0, 1fr) 26px;
+      gap: 10px;
+      margin-top: 14px;
+      align-items: center;
+    }
+
+    .footer-gap {
+      height: 4px;
+    }
+
+    @media (min-width: 768px) {
+      .page-shell {
+        max-width: 720px;
+        width: 100%;
+        margin: 0 auto;
+      }
+
+      .mode-dock {
+        right: max(calc((100vw - 720px) / 2 + 16px), 16px);
+      }
+
+      .add-word-button {
+        left: 50%;
+        right: auto;
+        transform: translateX(-50%);
+        width: min(684px, calc(100vw - 36px));
+      }
+
+      .add-word-button:active {
+        transform: translateX(-50%) translateY(1px);
+      }
+    }
+
+    @media (prefers-reduced-motion: reduce) {
+      *,
+      *::before,
+      *::after {
+        animation: none !important;
+        transition: none !important;
+        scroll-behavior: auto !important;
+      }
+    }
+  </style>
+</head>
+<body>
+  <div id="app">
+    <section id="shelfView" class="view active" aria-label="书架页">
+      <div class="page-shell">
+        <button id="shelfSearchTrigger" class="search-trigger" type="button" aria-label="搜索全部笔记本">
+          <svg class="search-trigger-icon" viewBox="0 0 24 24" fill="none" aria-hidden="true">
+            <circle cx="10.5" cy="10.5" r="5.5" stroke="currentColor" stroke-width="2"></circle>
+            <path d="M15 15L20 20" stroke="currentColor" stroke-width="2" stroke-linecap="round"></path>
+          </svg>
+          <span class="search-trigger-ghost" aria-hidden="true"></span>
+        </button>
+        <div id="shelfGrid" class="shelf-grid"></div>
+      </div>
+    </section>
+
+    <section id="listView" class="view" aria-label="单词列表页">
+      <div id="listShell" class="page-shell with-bottom-button">
+        <div class="header-row">
+          <button id="backToShelfButton" class="plain-icon-button" type="button" aria-label="返回书架">←</button>
+          <div id="listNotebookTitle" class="notebook-title"></div>
+        </div>
+
+        <button id="listSearchTrigger" class="search-trigger compact" type="button" aria-label="搜索全部笔记本">
+          <svg class="search-trigger-icon" viewBox="0 0 24 24" fill="none" aria-hidden="true">
+            <circle cx="10.5" cy="10.5" r="5.5" stroke="currentColor" stroke-width="2"></circle>
+            <path d="M15 15L20 20" stroke="currentColor" stroke-width="2" stroke-linecap="round"></path>
+          </svg>
+          <span class="search-trigger-ghost" aria-hidden="true"></span>
+        </button>
+
+        <div class="mode-dock" aria-label="排序与筛选">
+          <button id="sortPageButton" class="mode-button" type="button" data-mode="sort" data-value="page" aria-label="按页码排序">7</button>
+          <button id="sortAlphaButton" class="mode-button" type="button" data-mode="sort" data-value="alpha" aria-label="按字母排序">I</button>
+          <button id="sortTimeButton" class="mode-button" type="button" data-mode="sort" data-value="time" aria-label="按时间倒序">
+            <svg viewBox="0 0 24 24" fill="none" aria-hidden="true">
+              <circle cx="12" cy="12" r="8" stroke="currentColor" stroke-width="2"></circle>
+              <path d="M12 7V12L15.5 14" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"></path>
+            </svg>
+          </button>
+          <button id="filterAllButton" class="mode-button" type="button" data-mode="filter" data-value="all" aria-label="显示全部">
+            <svg viewBox="0 0 24 24" aria-hidden="true">
+              <rect x="4" y="4" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2"></rect>
+              <path d="M4 20L20 4" stroke="currentColor" stroke-width="2"></path>
+              <path d="M4 20V4H20" fill="currentColor"></path>
+            </svg>
+          </button>
+          <button id="filterMainButton" class="mode-button" type="button" data-mode="filter" data-value="mainOnly" aria-label="只显示主单词">
+            <svg viewBox="0 0 24 24" aria-hidden="true">
+              <rect x="4" y="4" width="16" height="16" fill="currentColor"></rect>
+            </svg>
+          </button>
+        </div>
+
+        <div id="wordList" class="word-list"></div>
+      </div>
+
+      <button id="addWordButton" class="add-word-button" type="button" aria-label="录入单词">＋</button>
+    </section>
+
+    <section id="entryView" class="view" aria-label="录入界面">
+      <div class="page-shell">
+        <div id="entryNotebookTitle" class="entry-title"></div>
+
+        <div class="entry-wrap">
+          <div class="entry-row">
+            <input
+              id="entryPageInput"
+              class="entry-input entry-page"
+              type="text"
+              inputmode="numeric"
+              autocomplete="off"
+              pattern="[0-9]*"
+              aria-label="页码"
+              placeholder=""
+            />
+            <input
+              id="entryWordInput"
+              class="entry-input entry-word"
+              type="text"
+              lang="en"
+              inputmode="text"
+              autocapitalize="none"
+              autocorrect="off"
+              spellcheck="false"
+              autocomplete="off"
+              aria-label="单词"
+              placeholder=""
+            />
+            <label class="analysis-toggle" aria-label="辨析词">
+              <input id="entryAnalysisInput" type="checkbox" />
+              <span class="analysis-toggle-box"></span>
+            </label>
+          </div>
+
+          <div class="entry-actions">
+            <button id="entryCancelButton" class="entry-button" type="button" aria-label="返回">←</button>
+            <button id="entrySaveButton" class="entry-button" type="button" aria-label="保存">✓</button>
+            <button id="entrySaveNextButton" class="entry-button" type="button" aria-label="保存并下一页">→</button>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <section id="searchView" class="view" aria-label="搜索结果页">
+      <div class="page-shell">
+        <div class="search-header">
+          <button id="searchBackButton" class="plain-icon-button" type="button" aria-label="返回">←</button>
+          <input
+            id="searchInput"
+            class="search-input"
+            type="search"
+            autocomplete="off"
+            autocapitalize="none"
+            autocorrect="off"
+            spellcheck="false"
+            placeholder=""
+            aria-label="搜索"
+          />
+        </div>
+        <div id="searchResults" class="search-results"></div>
+      </div>
+    </section>
+
+    <div id="modalOverlay" class="modal-overlay" aria-hidden="true">
+      <div class="modal-card" role="dialog" aria-modal="true" aria-labelledby="modalTitle" aria-describedby="modalText">
+        <div id="modalTitle" class="modal-title"></div>
+        <div id="modalText" class="modal-text"></div>
+        <div id="modalButtons" class="modal-buttons"></div>
+      </div>
+    </div>
+
+    <div id="editOverlay" class="modal-overlay" aria-hidden="true">
+      <div class="modal-card" role="dialog" aria-modal="true" aria-labelledby="editTitle">
+        <div id="editTitle" class="modal-title">编辑</div>
+        <div class="edit-grid">
+          <input
+            id="editPageInput"
+            class="entry-input entry-page"
+            type="text"
+            inputmode="numeric"
+            autocomplete="off"
+            pattern="[0-9]*"
+            aria-label="编辑页码"
+          />
+          <input
+            id="editWordInput"
+            class="entry-input entry-word"
+            type="text"
+            lang="en"
+            inputmode="text"
+            autocapitalize="none"
+            autocorrect="off"
+            spellcheck="false"
+            autocomplete="off"
+            aria-label="编辑单词"
+          />
+          <label class="analysis-toggle" aria-label="编辑辨析词">
+            <input id="editAnalysisInput" type="checkbox" />
+            <span class="analysis-toggle-box"></span>
+          </label>
+        </div>
+        <div class="modal-buttons">
+          <button id="editCancelButton" class="modal-button" type="button">取消</button>
+          <button id="editSaveButton" class="modal-button mint" type="button">保存</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    (() => {
+      "use strict";
+
+      const DB_NAME = "VocabNotebook";
+      const DB_VERSION = 1;
+      const APP_STATE_ID = "main";
+      const MAX_NOTEBOOKS = 30;
+      const SWIPE_WIDTH = 136;
+
+      const state = {
+        db: null,
+        notebooks: [],
+        words: [],
+        currentView: "shelf",
+        currentNotebookId: null,
+        sortMode: "page",
+        filterMode: "mainOnly",
+        searchOrigin: "shelf",
+        pendingHighlightWordId: null,
+        editingWordId: null,
+        modalResolver: null
+      };
+
+      const els = {};
+
+      document.addEventListener("DOMContentLoaded", init);
+
+      // 应用入口：初始化 DOM、数据库、缓存，并恢复上次停留位置。
+      async function init() {
+        cacheElements();
+        setupAppChrome();
+        bindStaticEvents();
+
+        try {
+          state.db = await openDatabase();
+          await ensureAppState();
+          await refreshCaches();
+          await restoreApp();
+        } catch (error) {
+          console.error(error);
+          await showDialog({
+            title: "初始化失败",
+            text: "IndexedDB 无法使用，请尝试在非隐私模式下重新打开。",
+            buttons: [{ text: "知道了", value: "ok", variant: "dark" }]
+          });
+        }
+      }
+
+      function cacheElements() {
+        els.shelfView = document.getElementById("shelfView");
+        els.listView = document.getElementById("listView");
+        els.entryView = document.getElementById("entryView");
+        els.searchView = document.getElementById("searchView");
+
+        els.shelfGrid = document.getElementById("shelfGrid");
+        els.wordList = document.getElementById("wordList");
+        els.searchResults = document.getElementById("searchResults");
+
+        els.shelfSearchTrigger = document.getElementById("shelfSearchTrigger");
+        els.listSearchTrigger = document.getElementById("listSearchTrigger");
+        els.searchInput = document.getElementById("searchInput");
+        els.searchBackButton = document.getElementById("searchBackButton");
+
+        els.backToShelfButton = document.getElementById("backToShelfButton");
+        els.addWordButton = document.getElementById("addWordButton");
+        els.listNotebookTitle = document.getElementById("listNotebookTitle");
+
+        els.entryNotebookTitle = document.getElementById("entryNotebookTitle");
+        els.entryCancelButton = document.getElementById("entryCancelButton");
+        els.entrySaveButton = document.getElementById("entrySaveButton");
+        els.entrySaveNextButton = document.getElementById("entrySaveNextButton");
+        els.entryPageInput = document.getElementById("entryPageInput");
+        els.entryWordInput = document.getElementById("entryWordInput");
+        els.entryAnalysisInput = document.getElementById("entryAnalysisInput");
+
+        els.sortPageButton = document.getElementById("sortPageButton");
+        els.sortAlphaButton = document.getElementById("sortAlphaButton");
+        els.sortTimeButton = document.getElementById("sortTimeButton");
+        els.filterAllButton = document.getElementById("filterAllButton");
+        els.filterMainButton = document.getElementById("filterMainButton");
+
+        els.modalOverlay = document.getElementById("modalOverlay");
+        els.modalTitle = document.getElementById("modalTitle");
+        els.modalText = document.getElementById("modalText");
+        els.modalButtons = document.getElementById("modalButtons");
+
+        els.editOverlay = document.getElementById("editOverlay");
+        els.editPageInput = document.getElementById("editPageInput");
+        els.editWordInput = document.getElementById("editWordInput");
+        els.editAnalysisInput = document.getElementById("editAnalysisInput");
+        els.editCancelButton = document.getElementById("editCancelButton");
+        els.editSaveButton = document.getElementById("editSaveButton");
+      }
+
+      function setupAppChrome() {
+        const iconSvg = `
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 192 192">
+            <rect width="192" height="192" rx="38" fill="#54bc8b"/>
+            <path d="M58 134l10-36 55-55 26 26-55 55-36 10z" fill="#ffffff"/>
+            <path d="M111 55l26 26" stroke="#54bc8b" stroke-width="8" stroke-linecap="round"/>
+            <path d="M69 123l16 16" stroke="#54bc8b" stroke-width="8" stroke-linecap="round"/>
+          </svg>
+        `.trim();
+        const iconUrl = "data:image/svg+xml;charset=utf-8," + encodeURIComponent(iconSvg);
+
+        let manifestLink = document.querySelector('link[rel="manifest"]');
+        if (!manifestLink) {
+          manifestLink = document.createElement("link");
+          manifestLink.rel = "manifest";
+          document.head.appendChild(manifestLink);
+        }
+
+        const manifest = {
+          name: "单词笔记本",
+          short_name: "单词本",
+          start_url: "./",
+          display: "standalone",
+          background_color: "#FFFFFF",
+          theme_color: "#54bc8b",
+          icons: [
+            { src: iconUrl, sizes: "192x192", type: "image/svg+xml", purpose: "any" },
+            { src: iconUrl, sizes: "512x512", type: "image/svg+xml", purpose: "any" }
+          ]
+        };
+
+        manifestLink.href =
+          "data:application/manifest+json;charset=utf-8," +
+          encodeURIComponent(JSON.stringify(manifest));
+
+        const rels = ["icon", "apple-touch-icon"];
+        rels.forEach((rel) => {
+          let link = document.querySelector(`link[rel="${rel}"]`);
+          if (!link) {
+            link = document.createElement("link");
+            link.rel = rel;
+            document.head.appendChild(link);
+          }
+          link.href = iconUrl;
+        });
+
+        /**
+         * 受“单文件 HTML”限制，这里不额外生成独立的 Service Worker 文件。
+         * 在 iPhone Safari 添加到主屏幕后，仍可使用 standalone 外观与 IndexedDB 持久数据。
+         */
+      }
+
+      function bindStaticEvents() {
+        els.shelfSearchTrigger.addEventListener("click", () => openSearch("shelf"));
+        els.listSearchTrigger.addEventListener("click", () => openSearch("list"));
+        els.searchBackButton.addEventListener("click", handleSearchBack);
+
+        els.backToShelfButton.addEventListener("click", () => {
+          openShelf();
+        });
+
+        els.addWordButton.addEventListener("click", () => {
+          openEntry();
+        });
+
+        els.entryCancelButton.addEventListener("click", () => {
+          openNotebook(state.currentNotebookId);
+        });
+
+        els.entrySaveButton.addEventListener("click", () => handleEntrySave("stay"));
+        els.entrySaveNextButton.addEventListener("click", () => handleEntrySave("next"));
+
+        els.searchInput.addEventListener("input", renderSearchResults);
+
+        [els.entryPageInput, els.editPageInput].forEach((input) => {
+          input.addEventListener("input", () => {
+            input.value = input.value.replace(/\D+/g, "").slice(0, 3);
+            updateEntryButtons();
+            updateEditButtons();
+          });
+        });
+
+        [els.entryWordInput, els.editWordInput].forEach((input) => {
+          input.addEventListener("input", () => {
+            updateEntryButtons();
+            updateEditButtons();
+          });
+        });
+
+        els.entryAnalysisInput.addEventListener("change", updateEntryButtons);
+        els.editAnalysisInput.addEventListener("change", updateEditButtons);
+
+        els.editCancelButton.addEventListener("click", closeEditModal);
+        els.editSaveButton.addEventListener("click", saveEditedWord);
+
+        document.querySelectorAll(".mode-button").forEach((button) => {
+          button.addEventListener("click", async () => {
+            const mode = button.dataset.mode;
+            const value = button.dataset.value;
+            if (mode === "sort") {
+              state.sortMode = value;
+            } else {
+              state.filterMode = value;
+            }
+            updateModeButtons();
+            await saveAppState({
+              lastNotebookId: state.currentNotebookId,
+              lastSortMode: state.sortMode,
+              lastFilterMode: state.filterMode
+            });
+            renderList();
+          });
+        });
+
+        document.addEventListener("click", (event) => {
+          if (!event.target.closest(".word-item")) {
+            closeAllSwipes();
+          }
+        });
+
+        document.addEventListener("keydown", (event) => {
+          if (event.key === "Escape") {
+            if (els.editOverlay.classList.contains("show")) {
+              closeEditModal();
+            } else if (els.modalOverlay.classList.contains("show")) {
+              closeDialog("cancel");
+            }
+          }
+        });
+
+        els.modalOverlay.addEventListener("click", (event) => {
+          if (event.target === els.modalOverlay) {
+            closeDialog("cancel");
+          }
+        });
+
+        els.editOverlay.addEventListener("click", (event) => {
+          if (event.target === els.editOverlay) {
+            closeEditModal();
+          }
+        });
+      }
+
+      async function restoreApp() {
+        const appState = await getAppState();
+        state.sortMode = appState.lastSortMode || "page";
+        state.filterMode = appState.lastFilterMode || "mainOnly";
+        updateModeButtons();
+
+        const targetNotebook = state.notebooks.find(
+          (notebook) => notebook.id === appState.lastNotebookId
+        );
+
+        if (targetNotebook) {
+          await openNotebook(targetNotebook.id);
+        } else {
+          await openShelf();
+        }
+      }
+
+      // 将笔记本与单词一次性读入内存，减少搜索与重绘时的 IndexedDB 访问频率。
+      async function refreshCaches() {
+        state.notebooks = (await getAllRecords("notebooks")).sort((a, b) => a.order - b.order);
+        state.words = await getAllRecords("words");
+      }
+
+      async function openShelf() {
+        state.currentView = "shelf";
+        state.currentNotebookId = null;
+        showView("shelf");
+        renderShelf();
+        await saveAppState({
+          lastNotebookId: null,
+          lastSortMode: state.sortMode,
+          lastFilterMode: state.filterMode
+        });
+      }
+
+      // 进入某一本笔记本，并同步记住当前排序 / 筛选状态。
+      async function openNotebook(notebookId, options = {}) {
+        const notebook = state.notebooks.find((item) => item.id === notebookId);
+        if (!notebook) {
+          await openShelf();
+          return;
+        }
+
+        state.currentView = "list";
+        state.currentNotebookId = notebookId;
+
+        if (options.sortMode) {
+          state.sortMode = options.sortMode;
+        }
+        if (options.filterMode) {
+          state.filterMode = options.filterMode;
+        }
+        if (typeof options.highlightWordId === "number") {
+          state.pendingHighlightWordId = options.highlightWordId;
+        }
+
+        updateModeButtons();
+        showView("list");
+        renderList();
+
+        await saveAppState({
+          lastNotebookId: notebookId,
+          lastSortMode: state.sortMode,
+          lastFilterMode: state.filterMode
+        });
+      }
+
+      function openEntry() {
+        const notebook = getCurrentNotebook();
+        if (!notebook) {
+          return;
+        }
+        state.currentView = "entry";
+        showView("entry");
+        resetEntryForm();
+        els.entryNotebookTitle.textContent = formatNotebookTitle(notebook);
+        requestAnimationFrame(() => {
+          els.entryPageInput.focus();
+        });
+      }
+
+      function openSearch(origin) {
+        state.searchOrigin = origin;
+        state.currentView = "search";
+        showView("search");
+        els.searchInput.value = "";
+        renderSearchResults();
+        requestAnimationFrame(() => {
+          els.searchInput.focus();
+        });
+      }
+
+      function handleSearchBack() {
+        if (state.searchOrigin === "list" && getCurrentNotebook()) {
+          state.currentView = "list";
+          showView("list");
+          renderList();
+        } else {
+          openShelf();
+        }
+      }
+
+      function showView(name) {
+        const views = {
+          shelf: els.shelfView,
+          list: els.listView,
+          entry: els.entryView,
+          search: els.searchView
+        };
+
+        Object.entries(views).forEach(([key, node]) => {
+          node.classList.toggle("active", key === name);
+        });
+      }
+
+      function renderShelf() {
+        els.shelfGrid.innerHTML = "";
+
+        state.notebooks.forEach((notebook) => {
+          const item = document.createElement("button");
+          item.type = "button";
+          item.className = "book-item";
+          item.setAttribute("aria-label", formatNotebookTitle(notebook));
+
+          item.innerHTML = `
+            <div class="book-figure">
+              ${bookSvg()}
+              <div class="book-order">${escapeHtml(String(notebook.order))}</div>
+            </div>
+            <div class="book-caption">${escapeHtml(notebook.name)}</div>
+          `;
+
+          let longPressTriggered = false;
+          let timer = null;
+          let startX = 0;
+          let startY = 0;
+
+          const clearPress = () => {
+            if (timer) {
+              clearTimeout(timer);
+              timer = null;
+            }
+          };
+
+          item.addEventListener("pointerdown", (event) => {
+            if (event.button && event.button !== 0) {
+              return;
+            }
+            longPressTriggered = false;
+            startX = event.clientX;
+            startY = event.clientY;
+            clearPress();
+            timer = window.setTimeout(() => {
+              longPressTriggered = true;
+              if (navigator.vibrate) {
+                navigator.vibrate(10);
+              }
+              handleNotebookLongPress(notebook);
+            }, 560);
+          });
+
+          item.addEventListener("pointermove", (event) => {
+            if (!timer) {
+              return;
+            }
+            if (
+              Math.abs(event.clientX - startX) > 8 ||
+              Math.abs(event.clientY - startY) > 8
+            ) {
+              clearPress();
+            }
+          });
+
+          ["pointerup", "pointerleave", "pointercancel"].forEach((eventName) => {
+            item.addEventListener(eventName, clearPress);
+          });
+
+          item.addEventListener("click", async (event) => {
+            if (longPressTriggered) {
+              event.preventDefault();
+              event.stopPropagation();
+              longPressTriggered = false;
+              return;
+            }
+            await openNotebook(notebook.id);
+          });
+
+          els.shelfGrid.appendChild(item);
+        });
+
+        if (state.notebooks.length < MAX_NOTEBOOKS) {
+          const addItem = document.createElement("button");
+          addItem.type = "button";
+          addItem.className = "book-item";
+          addItem.setAttribute("aria-label", "新建笔记本");
+          addItem.innerHTML = `
+            <div class="book-plus">+</div>
+            <div class="book-caption"></div>
+          `;
+          addItem.addEventListener("click", createNotebook);
+          els.shelfGrid.appendChild(addItem);
+        }
+      }
+
+      // 根据当前笔记本、排序方式、筛选方式渲染列表。
+      function renderList() {
+        const notebook = getCurrentNotebook();
+        if (!notebook) {
+          els.wordList.innerHTML = '<div class="empty-block"></div>';
+          return;
+        }
+
+        els.listNotebookTitle.textContent = formatNotebookTitle(notebook);
+
+        let rows = state.words.filter((word) => word.notebookId === notebook.id);
+
+        if (state.filterMode === "mainOnly") {
+          rows = rows.filter((word) => !word.isAnalysis);
+        }
+
+        rows = sortWords(rows, state.sortMode);
+
+        els.wordList.innerHTML = "";
+
+        if (!rows.length) {
+          els.wordList.innerHTML = '<div class="empty-block"></div>';
+          return;
+        }
+
+        rows.forEach((record) => {
+          const item = document.createElement("div");
+          item.className = "word-item";
+          item.dataset.id = String(record.id);
+          item.innerHTML = `
+            <div class="swipe-actions">
+              <button class="row-action edit" type="button" data-action="edit">编辑</button>
+              <button class="row-action delete" type="button" data-action="delete">删除</button>
+            </div>
+            <div class="swipe-content">
+              <div class="list-page">[${escapeHtml(String(record.page))}]</div>
+              <div class="list-word ${record.isAnalysis ? "analysis" : ""}">${escapeHtml(record.word)}</div>
+            </div>
+          `;
+
+          const editButton = item.querySelector('[data-action="edit"]');
+          const deleteButton = item.querySelector('[data-action="delete"]');
+
+          editButton.addEventListener("click", () => {
+            closeAllSwipes();
+            openEditModal(record);
+          });
+
+          deleteButton.addEventListener("click", async () => {
+            closeAllSwipes();
+            const choice = await showDialog({
+              title: "删除记录？",
+              text: `${record.word} · p.${record.page}`,
+              buttons: [
+                { text: "取消", value: "cancel" },
+                { text: "删除", value: "delete", variant: "dark" }
+              ]
+            });
+            if (choice === "delete") {
+              await deleteRecord("words", record.id);
+              await refreshCaches();
+              renderList();
+            }
+          });
+
+          setupSwipe(item);
+          els.wordList.appendChild(item);
+        });
+
+        if (typeof state.pendingHighlightWordId === "number") {
+          const target = els.wordList.querySelector(
+            `.word-item[data-id="${state.pendingHighlightWordId}"]`
+          );
+          if (target) {
+            requestAnimationFrame(() => {
+              target.scrollIntoView({ block: "center", behavior: "smooth" });
+              target.classList.add("flash-highlight");
+              window.setTimeout(() => {
+                target.classList.remove("flash-highlight");
+              }, 1300);
+            });
+          }
+          state.pendingHighlightWordId = null;
+        }
+      }
+
+      // 全局搜索：在全部笔记本内实时筛选，点击结果后跳转并定位。
+      function renderSearchResults() {
+        const query = els.searchInput.value.trim().toLowerCase();
+        els.searchResults.innerHTML = "";
+
+        if (!query) {
+          els.searchResults.innerHTML = '<div class="empty-block"></div>';
+          return;
+        }
+
+        const notebookMap = new Map(state.notebooks.map((notebook) => [notebook.id, notebook]));
+
+        const results = state.words
+          .filter((word) => notebookMap.has(word.notebookId))
+          .filter((word) => word.word.toLowerCase().includes(query))
+          .map((word) => ({
+            ...word,
+            notebook: notebookMap.get(word.notebookId)
+          }))
+          .sort((a, b) => {
+            const aWord = a.word.toLowerCase();
+            const bWord = b.word.toLowerCase();
+            const positionDiff = aWord.indexOf(query) - bWord.indexOf(query);
+            if (positionDiff !== 0) return positionDiff;
+            const wordDiff = aWord.localeCompare(bWord, "en", { sensitivity: "base" });
+            if (wordDiff !== 0) return wordDiff;
+            const notebookDiff = a.notebook.order - b.notebook.order;
+            if (notebookDiff !== 0) return notebookDiff;
+            const pageDiff = a.page - b.page;
+            if (pageDiff !== 0) return pageDiff;
+            return a.createdAt - b.createdAt;
+          });
+
+        results.forEach((result) => {
+          const row = document.createElement("button");
+          row.type = "button";
+          row.className = "search-row " + (result.isAnalysis ? "analysis" : "main");
+          row.innerHTML = `
+            <div class="search-book">${escapeHtml(String(result.notebook.order))}</div>
+            <div class="search-page">${escapeHtml(String(result.page))}</div>
+            <div class="search-word ${result.isAnalysis ? "analysis" : ""}">${escapeHtml(result.word)}</div>
+          `;
+          row.addEventListener("click", async () => {
+            els.searchInput.blur();
+            await openNotebook(result.notebookId, {
+              sortMode: "page",
+              filterMode: "all",
+              highlightWordId: result.id
+            });
+          });
+          els.searchResults.appendChild(row);
+        });
+
+        if (!results.length) {
+          els.searchResults.innerHTML = '<div class="empty-block"></div>';
+        }
+      }
+
+      function resetEntryForm() {
+        els.entryPageInput.value = "";
+        els.entryWordInput.value = "";
+        els.entryAnalysisInput.checked = false;
+        updateEntryButtons();
+      }
+
+      function updateModeButtons() {
+        [
+          [els.sortPageButton, state.sortMode === "page"],
+          [els.sortAlphaButton, state.sortMode === "alpha"],
+          [els.sortTimeButton, state.sortMode === "time"],
+          [els.filterAllButton, state.filterMode === "all"],
+          [els.filterMainButton, state.filterMode === "mainOnly"]
+        ].forEach(([button, active]) => {
+          button.classList.toggle("active", active);
+        });
+      }
+
+      function updateEntryButtons() {
+        const valid = isValidPage(els.entryPageInput.value) && hasWordValue(els.entryWordInput.value);
+        els.entrySaveButton.disabled = !valid;
+        els.entrySaveNextButton.disabled = !valid;
+      }
+
+      function updateEditButtons() {
+        const valid = isValidPage(els.editPageInput.value) && hasWordValue(els.editWordInput.value);
+        els.editSaveButton.disabled = !valid;
+      }
+
+      async function handleEntrySave(mode) {
+        const pageValue = normalizePageValue(els.entryPageInput.value);
+        const wordValue = els.entryWordInput.value.trim();
+
+        if (!isValidPage(pageValue) || !wordValue || !state.currentNotebookId) {
+          updateEntryButtons();
+          return;
+        }
+
+        const button = mode === "next" ? els.entrySaveNextButton : els.entrySaveButton;
+        flashButton(button);
+
+        await addRecord("words", {
+          notebookId: state.currentNotebookId,
+          word: wordValue,
+          page: Number(pageValue),
+          isAnalysis: els.entryAnalysisInput.checked,
+          createdAt: Date.now()
+        });
+
+        await refreshCaches();
+
+        els.entryWordInput.value = "";
+
+        if (mode === "next") {
+          const currentPage = Number(pageValue);
+          els.entryPageInput.value = String(Math.min(200, currentPage + 1));
+        }
+
+        updateEntryButtons();
+
+        requestAnimationFrame(() => {
+          els.entryWordInput.focus();
+        });
+      }
+
+      function flashButton(button) {
+        button.classList.add("flash");
+        window.setTimeout(() => {
+          button.classList.remove("flash");
+        }, 200);
+      }
+
+      function getCurrentNotebook() {
+        return state.notebooks.find((notebook) => notebook.id === state.currentNotebookId) || null;
+      }
+
+      function sortWords(rows, mode) {
+        const list = rows.slice();
+        if (mode === "page") {
+          return list.sort((a, b) => {
+            if (a.page !== b.page) return a.page - b.page;
+            return a.createdAt - b.createdAt;
+          });
+        }
+        if (mode === "alpha") {
+          return list.sort((a, b) => {
+            const aFirst = (a.word[0] || "").toLowerCase();
+            const bFirst = (b.word[0] || "").toLowerCase();
+            const firstDiff = aFirst.localeCompare(bFirst, "en", { sensitivity: "base" });
+            if (firstDiff !== 0) return firstDiff;
+            const fullDiff = a.word.toLowerCase().localeCompare(b.word.toLowerCase(), "en", {
+              sensitivity: "base"
+            });
+            if (fullDiff !== 0) return fullDiff;
+            return a.createdAt - b.createdAt;
+          });
+        }
+        return list.sort((a, b) => b.createdAt - a.createdAt);
+      }
+
+      // 轻量左滑交互：只处理横向拖动，避免与纵向滚动冲突。
+      function setupSwipe(item) {
+        const content = item.querySelector(".swipe-content");
+        let startX = 0;
+        let startY = 0;
+        let baseOffset = 0;
+        let dragging = false;
+        let pointerId = null;
+        let axis = null;
+
+        const setOffset = (value, withTransition) => {
+          const safeValue = Math.max(-SWIPE_WIDTH, Math.min(0, value));
+          item.dataset.offset = String(safeValue);
+          content.style.transition = withTransition ? "transform 180ms ease" : "none";
+          content.style.transform = `translateX(${safeValue}px)`;
+        };
+
+        const getOffset = () => Number(item.dataset.offset || "0");
+
+        content.addEventListener("pointerdown", (event) => {
+          if (event.pointerType === "mouse" && event.button !== 0) {
+            return;
+          }
+          if (event.target.closest("button")) {
+            return;
+          }
+
+          closeAllSwipes(item);
+          dragging = true;
+          pointerId = event.pointerId;
+          axis = null;
+          startX = event.clientX;
+          startY = event.clientY;
+          baseOffset = getOffset();
+
+          if (content.setPointerCapture) {
+            content.setPointerCapture(pointerId);
+          }
+        });
+
+        content.addEventListener("pointermove", (event) => {
+          if (!dragging || event.pointerId !== pointerId) {
+            return;
+          }
+
+          const deltaX = event.clientX - startX;
+          const deltaY = event.clientY - startY;
+
+          if (!axis) {
+            if (Math.abs(deltaX) < 6 && Math.abs(deltaY) < 6) {
+              return;
+            }
+            axis = Math.abs(deltaX) > Math.abs(deltaY) ? "x" : "y";
+          }
+
+          if (axis !== "x") {
+            return;
+          }
+
+          event.preventDefault();
+          setOffset(baseOffset + deltaX, false);
+        });
+
+        const endDrag = (event) => {
+          if (!dragging || event.pointerId !== pointerId) {
+            return;
+          }
+
+          dragging = false;
+          if (content.releasePointerCapture) {
+            content.releasePointerCapture(pointerId);
+          }
+
+          const offset = getOffset();
+          if (offset < -SWIPE_WIDTH / 2) {
+            setOffset(-SWIPE_WIDTH, true);
+          } else {
+            setOffset(0, true);
+          }
+
+          pointerId = null;
+          axis = null;
+        };
+
+        content.addEventListener("pointerup", endDrag);
+        content.addEventListener("pointercancel", endDrag);
+
+        content.addEventListener("click", (event) => {
+          const offset = getOffset();
+          if (offset < -8) {
+            event.preventDefault();
+            event.stopPropagation();
+            setOffset(0, true);
+          }
+        });
+
+        setOffset(0, true);
+      }
+
+      function closeAllSwipes(exceptItem = null) {
+        els.wordList.querySelectorAll(".word-item").forEach((item) => {
+          if (item === exceptItem) return;
+          const content = item.querySelector(".swipe-content");
+          if (content) {
+            item.dataset.offset = "0";
+            content.style.transform = "translateX(0)";
+            content.style.transition = "transform 180ms ease";
+          }
+        });
+      }
+
+      async function createNotebook() {
+        if (state.notebooks.length >= MAX_NOTEBOOKS) {
+          return;
+        }
+
+        const nextOrder =
+          state.notebooks.reduce((max, notebook) => Math.max(max, notebook.order), 0) + 1;
+        const now = Date.now();
+
+        const notebookId = await addRecord("notebooks", {
+          order: nextOrder,
+          name: formatMonthYear(now),
+          createdAt: now
+        });
+
+        await refreshCaches();
+        await openNotebook(notebookId);
+      }
+
+      async function handleNotebookLongPress(notebook) {
+        const action = await showDialog({
+          title: formatNotebookTitle(notebook),
+          text: "",
+          buttons: [
+            { text: "取消", value: "cancel" },
+            { text: "删除", value: "delete", variant: "dark" }
+          ]
+        });
+
+        if (action !== "delete") {
+          return;
+        }
+
+        const count = state.words.filter((word) => word.notebookId === notebook.id).length;
+        if (count > 0) {
+          const confirmDelete = await showDialog({
+            title: "确认删除？",
+            text: `本笔记本内有 ${count} 条记录，确认删除？`,
+            buttons: [
+              { text: "取消", value: "cancel" },
+              { text: "删除", value: "delete", variant: "dark" }
+            ]
+          });
+          if (confirmDelete !== "delete") {
+            return;
+          }
+        }
+
+        await deleteNotebookCascade(notebook.id);
+        await refreshCaches();
+        await openShelf();
+      }
+
+      function openEditModal(record) {
+        state.editingWordId = record.id;
+        els.editPageInput.value = String(record.page);
+        els.editWordInput.value = record.word;
+        els.editAnalysisInput.checked = !!record.isAnalysis;
+        updateEditButtons();
+        els.editOverlay.classList.add("show");
+        els.editOverlay.setAttribute("aria-hidden", "false");
+        requestAnimationFrame(() => {
+          els.editWordInput.focus();
+          els.editWordInput.select();
+        });
+      }
+
+      function closeEditModal() {
+        state.editingWordId = null;
+        els.editOverlay.classList.remove("show");
+        els.editOverlay.setAttribute("aria-hidden", "true");
+      }
+
+      async function saveEditedWord() {
+        if (!state.editingWordId) {
+          return;
+        }
+
+        const record = state.words.find((item) => item.id === state.editingWordId);
+        if (!record) {
+          closeEditModal();
+          return;
+        }
+
+        const nextPage = normalizePageValue(els.editPageInput.value);
+        const nextWord = els.editWordInput.value.trim();
+
+        if (!isValidPage(nextPage) || !nextWord) {
+          updateEditButtons();
+          return;
+        }
+
+        await putRecord("words", {
+          ...record,
+          word: nextWord,
+          page: Number(nextPage),
+          isAnalysis: els.editAnalysisInput.checked
+        });
+
+        state.pendingHighlightWordId = record.id;
+        await refreshCaches();
+        closeEditModal();
+        renderList();
+      }
+
+      function isValidPage(value) {
+        const page = Number(normalizePageValue(value));
+        return Number.isInteger(page) && page >= 1 && page <= 200;
+      }
+
+      function normalizePageValue(value) {
+        return String(value || "").replace(/\D+/g, "").trim();
+      }
+
+      function hasWordValue(value) {
+        return String(value || "").trim().length > 0;
+      }
+
+      function formatNotebookTitle(notebook) {
+        return `#${notebook.order} · ${notebook.name}`;
+      }
+
+      function formatMonthYear(timestamp) {
+        const date = new Date(timestamp);
+        const month = date.toLocaleString("en-US", { month: "short" });
+        const year = date.getFullYear();
+        return `${month} ${year}`;
+      }
+
+      function bookSvg() {
+        return `
+          <svg class="book-svg" viewBox="0 0 80 120" fill="none" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
+            <path d="M16 8H59C65.6 8 71 13.4 71 20V104C71 108.4 67.4 112 63 112H16V8Z" stroke="currentColor" stroke-width="2"/>
+            <path d="M19 8V112" stroke="currentColor" stroke-width="2"/>
+            <path d="M59 8C67.2 8 74 14.8 74 23V102C74 107.5 69.5 112 64 112" stroke="currentColor" stroke-width="2"/>
+            <path d="M19 22H67" stroke="currentColor" stroke-width="1.5"/>
+            <path d="M19 98H67" stroke="currentColor" stroke-width="1.5"/>
+          </svg>
+        `;
+      }
+
+      function escapeHtml(value) {
+        return String(value)
+          .replaceAll("&", "&amp;")
+          .replaceAll("<", "&lt;")
+          .replaceAll(">", "&gt;")
+          .replaceAll('"', "&quot;")
+          .replaceAll("'", "&#39;");
+      }
+
+      function showDialog({ title = "", text = "", buttons = [] }) {
+        els.modalTitle.textContent = title;
+        els.modalText.textContent = text;
+        els.modalButtons.innerHTML = "";
+
+        return new Promise((resolve) => {
+          state.modalResolver = resolve;
+
+          const normalizedButtons = buttons.length
+            ? buttons
+            : [{ text: "知道了", value: "ok", variant: "dark" }];
+
+          normalizedButtons.forEach((buttonDef) => {
+            const button = document.createElement("button");
+            button.type = "button";
+            button.className = "modal-button" + (buttonDef.variant ? ` ${buttonDef.variant}` : "");
+            button.textContent = buttonDef.text;
+            button.addEventListener("click", () => closeDialog(buttonDef.value));
+            els.modalButtons.appendChild(button);
+          });
+
+          els.modalOverlay.classList.add("show");
+          els.modalOverlay.setAttribute("aria-hidden", "false");
+        });
+      }
+
+      function closeDialog(value = "cancel") {
+        els.modalOverlay.classList.remove("show");
+        els.modalOverlay.setAttribute("aria-hidden", "true");
+        const resolver = state.modalResolver;
+        state.modalResolver = null;
+        if (resolver) {
+          resolver(value);
+        }
+      }
+
+      // IndexedDB 结构：notebooks / words / appState 三张表。
+      function openDatabase() {
+        return new Promise((resolve, reject) => {
+          const request = indexedDB.open(DB_NAME, DB_VERSION);
+
+          request.onupgradeneeded = (event) => {
+            const db = event.target.result;
+
+            if (!db.objectStoreNames.contains("notebooks")) {
+              const notebooks = db.createObjectStore("notebooks", {
+                keyPath: "id",
+                autoIncrement: true
+              });
+              notebooks.createIndex("order", "order", { unique: false });
+              notebooks.createIndex("createdAt", "createdAt", { unique: false });
+            }
+
+            if (!db.objectStoreNames.contains("words")) {
+              const words = db.createObjectStore("words", {
+                keyPath: "id",
+                autoIncrement: true
+              });
+              words.createIndex("notebookId", "notebookId", { unique: false });
+              words.createIndex("createdAt", "createdAt", { unique: false });
+            }
+
+            if (!db.objectStoreNames.contains("appState")) {
+              db.createObjectStore("appState", {
+                keyPath: "id"
+              });
+            }
+          };
+
+          request.onsuccess = () => resolve(request.result);
+          request.onerror = () => reject(request.error);
+        });
+      }
+
+      function getStore(storeName, mode = "readonly") {
+        return state.db.transaction(storeName, mode).objectStore(storeName);
+      }
+
+      function requestToPromise(request) {
+        return new Promise((resolve, reject) => {
+          request.onsuccess = () => resolve(request.result);
+          request.onerror = () => reject(request.error);
+        });
+      }
+
+      function getAllRecords(storeName) {
+        return requestToPromise(getStore(storeName).getAll());
+      }
+
+      function getRecord(storeName, key) {
+        return requestToPromise(getStore(storeName).get(key));
+      }
+
+      function addRecord(storeName, value) {
+        return requestToPromise(getStore(storeName, "readwrite").add(value));
+      }
+
+      function putRecord(storeName, value) {
+        return requestToPromise(getStore(storeName, "readwrite").put(value));
+      }
+
+      function deleteRecord(storeName, key) {
+        return requestToPromise(getStore(storeName, "readwrite").delete(key));
+      }
+
+      async function ensureAppState() {
+        const current = await getRecord("appState", APP_STATE_ID);
+        if (!current) {
+          await putRecord("appState", {
+            id: APP_STATE_ID,
+            lastNotebookId: null,
+            lastSortMode: "page",
+            lastFilterMode: "mainOnly"
+          });
+        }
+      }
+
+      async function getAppState() {
+        return (
+          (await getRecord("appState", APP_STATE_ID)) || {
+            id: APP_STATE_ID,
+            lastNotebookId: null,
+            lastSortMode: "page",
+            lastFilterMode: "mainOnly"
+          }
+        );
+      }
+
+      async function saveAppState(patch) {
+        const current = await getAppState();
+        await putRecord("appState", {
+          ...current,
+          ...patch,
+          id: APP_STATE_ID
+        });
+      }
+
+      // 删除笔记本时，顺带删除其下单词，并把后续序号整体前移，保持连续。
+      async function deleteNotebookCascade(notebookId) {
+        const notebook = state.notebooks.find((item) => item.id === notebookId);
+        if (!notebook) {
+          return;
+        }
+
+        const wordsToDelete = state.words.filter((word) => word.notebookId === notebookId);
+        for (const word of wordsToDelete) {
+          await deleteRecord("words", word.id);
+        }
+
+        await deleteRecord("notebooks", notebookId);
+
+        const afterNotebooks = state.notebooks
+          .filter((item) => item.order > notebook.order)
+          .sort((a, b) => a.order - b.order);
+
+        for (const item of afterNotebooks) {
+          await putRecord("notebooks", {
+            ...item,
+            order: item.order - 1
+          });
+        }
+      }
+    })();
+  </script>
+</body>
+</html>
