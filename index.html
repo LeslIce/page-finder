@@ -152,14 +152,14 @@
     .notebook-title {
       min-width: 0;
       font-family: var(--title-sans);
-      font-size: clamp(1.34rem, 5.1vw, 1.68rem);
+      font-size: clamp(1.44rem, 5vw, 1.74rem);
       font-weight: 500;
-      line-height: 1.08;
-      letter-spacing: -0.022em;
+      line-height: 1.12;
       white-space: nowrap;
       overflow: hidden;
       text-overflow: ellipsis;
       padding-right: 12px;
+      letter-spacing: -0.01em;
     }
 
     .search-trigger {
@@ -187,18 +187,10 @@
       flex: 0 0 auto;
     }
 
-    .search-trigger-label {
+    .search-trigger-ghost {
       flex: 1;
-      min-width: 0;
-      color: rgba(255, 255, 255, 0.82);
-      font-family: var(--ui-sans);
-      font-size: 0.96rem;
-      line-height: 1.2;
-      white-space: nowrap;
-      overflow: hidden;
-      text-overflow: ellipsis;
-      text-align: center;
-      transform: translateX(-10px);
+      height: 1px;
+      background: rgba(255, 255, 255, 0.52);
     }
 
     .shelf-grid {
@@ -243,10 +235,9 @@
       justify-content: center;
       font-size: 2rem;
       line-height: 1;
-      padding-right: 0;
       font-weight: 500;
-      font-family: var(--title-sans);
       pointer-events: none;
+      text-align: center;
     }
 
     .book-caption {
@@ -263,7 +254,7 @@
       display: flex;
       align-items: center;
       justify-content: center;
-      font-family: "Quicksand", "Helvetica Neue", Arial, sans-serif;
+      font-family: var(--ui-sans);
       font-size: 2.5rem;
       line-height: 1;
       color: var(--black);
@@ -285,13 +276,13 @@
     }
 
     .mode-dock {
-      position: absolute;
+      position: fixed;
       right: calc(10px + var(--safe-right));
       bottom: calc(138px + var(--safe-bottom));
       display: flex;
       flex-direction: column;
-      gap: 18px;
-      z-index: 8;
+      gap: 16px;
+      z-index: 12;
     }
 
     .mode-button {
@@ -307,13 +298,14 @@
       font-size: 0.92rem;
       line-height: 1;
       padding: 0;
-      transition: background-color 160ms ease, transform 160ms ease;
+      transition: background-color 180ms ease, transform 180ms ease;
       border: 1px solid transparent;
     }
 
     .mode-button svg {
       width: 14px;
       height: 14px;
+      display: block;
     }
 
     .mode-button.active {
@@ -330,10 +322,15 @@
       min-height: 0;
       overflow: auto;
       margin-top: 16px;
-      padding-right: 48px;
+      padding-right: 44px;
+      padding-bottom: calc(112px + var(--safe-bottom));
       border-top: 1px solid var(--line);
       overscroll-behavior: contain;
-      overflow-anchor: none;
+      scroll-padding-bottom: calc(118px + var(--safe-bottom));
+    }
+
+    .word-list.swipe-suspended {
+      pointer-events: auto;
     }
 
     .word-item {
@@ -365,7 +362,7 @@
       top: 0;
       right: 0;
       bottom: 0;
-      width: 136px;
+      width: 116px;
       display: flex;
       align-items: stretch;
       justify-content: stretch;
@@ -405,24 +402,24 @@
       width: 100%;
       min-height: 56px;
       display: grid;
-      grid-template-columns: 54px 1fr;
+      grid-template-columns: 60px 1fr;
       align-items: center;
-      gap: 10px;
+      gap: 8px;
       padding: 0 2px 0 0;
       background: var(--white);
       transform: translateX(0);
-      transition: transform 240ms cubic-bezier(0.25, 1.5, 0.5, 1);
+      transition: transform 220ms cubic-bezier(0.22, 1, 0.36, 1);
     }
 
     .list-page {
-      min-width: 54px;
-      padding-left: 4px;
+      min-width: 60px;
+      padding-left: 6px;
+      font-family: var(--ui-sans);
       font-size: 0.94rem;
-      letter-spacing: 0.08em;
+      font-weight: 700;
+      letter-spacing: 0.06em;
       color: var(--mint-solid);
       white-space: nowrap;
-      font-family: var(--ui-sans);
-      font-weight: 700;
       font-variant-numeric: tabular-nums;
     }
 
@@ -455,7 +452,7 @@
       display: inline-flex;
       align-items: center;
       justify-content: center;
-      font-family: "Quicksand", "Helvetica Neue", Arial, sans-serif;
+      font-family: var(--ui-sans);
       font-size: 1.35rem;
       line-height: 1;
       z-index: 7;
@@ -470,28 +467,32 @@
       display: flex;
       flex-direction: column;
       padding-bottom: calc(24px + var(--safe-bottom));
-      scroll-padding-bottom: calc(120px + var(--keyboard-offset));
-      overflow: auto;
-      overscroll-behavior: contain;
+      scroll-padding-bottom: calc(132px + var(--keyboard-offset));
+      overflow: hidden;
     }
 
     .entry-wrap {
       display: flex;
       flex-direction: column;
-      gap: 30px;
-      margin-top: clamp(188px, 31vh, 334px);
-      transform: translateY(var(--keyboard-lift));
-      transition: transform 220ms ease;
+      gap: 32px;
+      margin-top: clamp(158px, 30vh, 312px);
+      transform: translateY(calc(var(--keyboard-lift) * -1));
+      transition: transform 220ms cubic-bezier(0.22, 1, 0.36, 1);
       padding-top: 0;
+      will-change: transform;
     }
 
     .entry-title {
+      min-width: 0;
       font-family: var(--title-sans);
-      font-size: clamp(1.34rem, 5.1vw, 1.68rem);
+      font-size: clamp(1.44rem, 5vw, 1.74rem);
       font-weight: 500;
-      line-height: 1.08;
-      letter-spacing: -0.022em;
+      line-height: 1.12;
       color: var(--black);
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+      letter-spacing: -0.01em;
     }
 
     .entry-row {
@@ -518,7 +519,8 @@
 
     .entry-page {
       text-align: center;
-      font-family: "Quicksand", "Helvetica Neue", Arial, sans-serif;
+      font-family: var(--title-sans);
+      font-variant-numeric: tabular-nums;
     }
 
     .entry-word {
@@ -574,23 +576,21 @@
       width: 60px;
       height: 60px;
       border-radius: 999px;
-      background: var(--button-gray);
-      color: var(--white);
       display: inline-flex;
       align-items: center;
       justify-content: center;
-      line-height: 1;
-      transition: transform 130ms ease, opacity 130ms ease, background-color 130ms ease;
-      flex: 0 0 auto;
+      transition: transform 140ms ease, opacity 140ms ease, background-color 140ms ease;
+      background: var(--button-gray);
+      color: var(--white);
     }
 
     .entry-button svg {
-      width: 26px;
-      height: 26px;
+      width: 24px;
+      height: 24px;
       display: block;
       stroke: currentColor;
       fill: none;
-      stroke-width: 2.1;
+      stroke-width: 2.6;
       stroke-linecap: square;
       stroke-linejoin: miter;
       vector-effect: non-scaling-stroke;
@@ -601,14 +601,18 @@
       color: var(--white);
     }
 
-    .entry-button.ready,
-    .entry-button.flash {
+    .entry-button.action:not(:disabled) {
       background: var(--mint);
       color: var(--white);
     }
 
+    .entry-button.flash {
+      transform: scale(0.97);
+    }
+
     .entry-button:disabled {
-      opacity: 1;
+      background: var(--button-gray);
+      color: var(--white);
       pointer-events: none;
     }
 
@@ -636,7 +640,7 @@
     }
 
     .search-input::placeholder {
-      color: rgba(255, 255, 255, 0.76);
+      color: rgba(255, 255, 255, 0.8);
     }
 
     .search-input::-webkit-search-cancel-button {
@@ -653,9 +657,9 @@
     .search-row {
       width: 100%;
       display: grid;
-      grid-template-columns: 54px 46px minmax(0, 1fr);
+      grid-template-columns: 54px 56px minmax(0, 1fr);
       align-items: flex-start;
-      gap: 8px 8px;
+      gap: 8px 10px;
       min-height: 64px;
       padding: 12px 2px 11px 0;
       border-bottom: 1px solid var(--line);
@@ -673,20 +677,19 @@
       justify-content: flex-start;
       color: var(--mint-solid);
       font-family: var(--ui-sans);
-      font-size: 1.5rem;
+      font-size: 1.28rem;
       font-weight: 700;
       line-height: 1;
       padding-top: 4px;
-      padding-left: 8px;
-      font-variant-numeric: tabular-nums;
+      padding-left: 6px;
     }
 
     .search-page {
+      font-family: var(--ui-sans);
       font-size: 1rem;
       color: var(--gray);
       white-space: nowrap;
       padding-top: 5px;
-      font-family: var(--ui-sans);
       font-variant-numeric: tabular-nums;
     }
 
@@ -730,9 +733,9 @@
 
     .settings-title {
       font-family: var(--title-sans);
-      font-size: clamp(1.28rem, 4.9vw, 1.52rem);
+      font-size: 1.08rem;
+      line-height: 1.2;
       font-weight: 500;
-      line-height: 1.12;
     }
 
     .settings-label {
@@ -749,7 +752,7 @@
       color: var(--black);
       font-size: 0.98rem;
       line-height: 1.2;
-      font-family: "Quicksand", "Helvetica Neue", Arial, sans-serif;
+      font-family: var(--ui-sans);
     }
 
     .settings-input::placeholder {
@@ -771,7 +774,7 @@
       display: inline-flex;
       align-items: center;
       justify-content: center;
-      font-family: "Quicksand", "Helvetica Neue", Arial, sans-serif;
+      font-family: var(--ui-sans);
       font-size: 1rem;
       line-height: 1;
       padding: 0 18px;
@@ -830,7 +833,7 @@
       min-height: 38px;
       padding: 0 14px;
       border-radius: 999px;
-      font-family: "Quicksand", "Helvetica Neue", Arial, sans-serif;
+      font-family: var(--ui-sans);
       font-size: 0.92rem;
       line-height: 1;
       border: 1px solid var(--black);
@@ -917,7 +920,7 @@
             <circle cx="10.5" cy="10.5" r="5.5" stroke="currentColor" stroke-width="2"></circle>
             <path d="M15 15L20 20" stroke="currentColor" stroke-width="2" stroke-linecap="round"></path>
           </svg>
-          <span class="search-trigger-label">搜索所有单词…</span>
+          <span class="search-trigger-ghost" aria-hidden="true"></span>
         </button>
         <div id="shelfGrid" class="shelf-grid"></div>
       </div>
@@ -935,7 +938,7 @@
             <circle cx="10.5" cy="10.5" r="5.5" stroke="currentColor" stroke-width="2"></circle>
             <path d="M15 15L20 20" stroke="currentColor" stroke-width="2" stroke-linecap="round"></path>
           </svg>
-          <span class="search-trigger-label">搜索所有单词…</span>
+          <span class="search-trigger-ghost" aria-hidden="true"></span>
         </button>
 
         <div class="mode-dock" aria-label="排序与筛选">
@@ -971,7 +974,7 @@
       <div class="page-shell entry-shell">
         <div id="entryNotebookTitle" class="entry-title"></div>
 
-        <div class="entry-wrap">
+        <div id="entryWrap" class="entry-wrap">
           <div class="entry-row">
             <input
               id="entryPageInput"
@@ -1002,15 +1005,15 @@
             </label>
           </div>
 
-          <div id="entryActions" class="entry-actions">
+          <div class="entry-actions">
             <button id="entryCancelButton" class="entry-button back" type="button" aria-label="返回">
-              <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M20 12H6"></path><path d="M11 7L6 12L11 17"></path></svg>
+              <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M19 12H6"></path><path d="M11 7L6 12L11 17"></path></svg>
             </button>
-            <button id="entrySaveButton" class="entry-button" type="button" aria-label="保存">
-              <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M6 13L10.5 17.5L18 8"></path></svg>
+            <button id="entrySaveButton" class="entry-button action" type="button" aria-label="保存">
+              <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M5 12.5L10 17.5L19 6.5"></path></svg>
             </button>
-            <button id="entrySaveNextButton" class="entry-button" type="button" aria-label="保存并下一页">
-              <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 12H18"></path><path d="M13 7L18 12L13 17"></path></svg>
+            <button id="entrySaveNextButton" class="entry-button action" type="button" aria-label="保存并下一页">
+              <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M5 12H18"></path><path d="M13 7L18 12L13 17"></path></svg>
             </button>
           </div>
         </div>
@@ -1038,7 +1041,7 @@
           />
           <div class="settings-label">模型名称</div>
           <input
-            id="settingsModelInput"
+            id="modelInput"
             class="settings-input"
             type="text"
             autocapitalize="none"
@@ -1049,7 +1052,8 @@
             aria-label="模型名称"
           />
           <div class="settings-hint">Base URL: https://api.siliconflow.cn/v1
-Provider: OpenAI compatible</div>
+Provider: OpenAI 兼容
+默认模型: Qwen/Qwen3-8B</div>
           <button id="settingsSaveButton" class="settings-save-button" type="button">保存</button>
         </div>
       </div>
@@ -1067,7 +1071,7 @@ Provider: OpenAI compatible</div>
             autocapitalize="none"
             autocorrect="off"
             spellcheck="false"
-            placeholder="搜索所有单词…"
+            placeholder="搜索所有单词..."
             aria-label="搜索"
           />
         </div>
@@ -1146,10 +1150,12 @@ Provider: OpenAI compatible</div>
         searchMeaningController: null,
         searchMeaningTimer: null,
         searchMeaningToken: 0,
-        viewportBaseHeight: window.innerHeight || 0,
-        activeEntryInput: null,
-        swipeEnableTimer: null,
-        swipeReadyAt: 0
+        listSwipeMountTimer: null,
+        listHighlightTimer: null,
+        entryViewportRaf: 0,
+        entryViewportTimers: [],
+        entryKeyboardLift: 0,
+        entryFocusMode: "page"
       };
 
       const els = {};
@@ -1195,7 +1201,7 @@ Provider: OpenAI compatible</div>
         els.openSettingsButton = document.getElementById("openSettingsButton");
         els.settingsBackButton = document.getElementById("settingsBackButton");
         els.apiKeyInput = document.getElementById("apiKeyInput");
-        els.settingsModelInput = document.getElementById("settingsModelInput");
+        els.modelInput = document.getElementById("modelInput");
         els.settingsSaveButton = document.getElementById("settingsSaveButton");
 
         els.backToShelfButton = document.getElementById("backToShelfButton");
@@ -1203,16 +1209,13 @@ Provider: OpenAI compatible</div>
         els.listNotebookTitle = document.getElementById("listNotebookTitle");
 
         els.entryNotebookTitle = document.getElementById("entryNotebookTitle");
+        els.entryWrap = document.getElementById("entryWrap");
         els.entryCancelButton = document.getElementById("entryCancelButton");
         els.entrySaveButton = document.getElementById("entrySaveButton");
         els.entrySaveNextButton = document.getElementById("entrySaveNextButton");
         els.entryPageInput = document.getElementById("entryPageInput");
         els.entryWordInput = document.getElementById("entryWordInput");
         els.entryAnalysisInput = document.getElementById("entryAnalysisInput");
-        els.entryShell = els.entryView.querySelector('.entry-shell');
-        els.entryWrap = els.entryView.querySelector('.entry-wrap');
-        els.entryRow = els.entryView.querySelector('.entry-row');
-        els.entryActions = document.getElementById("entryActions");
 
         els.sortPageButton = document.getElementById("sortPageButton");
         els.sortAlphaButton = document.getElementById("sortAlphaButton");
@@ -1308,32 +1311,20 @@ Provider: OpenAI compatible</div>
         els.entrySaveButton.addEventListener("click", () => handleEntrySave("stay"));
         els.entrySaveNextButton.addEventListener("click", () => handleEntrySave("next"));
 
-        els.searchInput.addEventListener("input", renderSearchResults);
-        els.apiKeyInput.addEventListener("keydown", (event) => {
-          if (event.key === "Enter") {
-            event.preventDefault();
-            saveSettings();
-          }
-        });
-        els.settingsModelInput.addEventListener("keydown", (event) => {
-          if (event.key === "Enter") {
-            event.preventDefault();
-            saveSettings();
-          }
+        [els.entrySaveButton, els.entrySaveNextButton].forEach((button) => {
+          button.addEventListener("pointerdown", () => {
+            state.entryFocusMode = "word";
+            refocusEntryWordSoon();
+          });
         });
 
-        [els.entryPageInput, els.entryWordInput].forEach((input) => {
-          input.addEventListener("focus", () => {
-            state.activeEntryInput = input;
-            syncEntryViewport();
-            window.setTimeout(syncEntryViewport, 80);
-            window.setTimeout(syncEntryViewport, 180);
-          });
-          input.addEventListener("blur", () => {
-            if (state.activeEntryInput === input) {
-              state.activeEntryInput = null;
+        els.searchInput.addEventListener("input", renderSearchResults);
+        [els.apiKeyInput, els.modelInput].forEach((input) => {
+          input.addEventListener("keydown", (event) => {
+            if (event.key === "Enter") {
+              event.preventDefault();
+              saveSettings();
             }
-            window.setTimeout(syncEntryViewport, 60);
           });
         });
 
@@ -1354,6 +1345,20 @@ Provider: OpenAI compatible</div>
 
         els.entryAnalysisInput.addEventListener("change", updateEntryButtons);
         els.editAnalysisInput.addEventListener("change", updateEditButtons);
+
+        [els.entryPageInput, els.entryWordInput].forEach((input) => {
+          input.addEventListener("focus", () => {
+            state.entryFocusMode = input === els.entryPageInput ? "page" : "word";
+            scheduleEntryViewportSync();
+          });
+          input.addEventListener("blur", () => {
+            window.setTimeout(() => {
+              if (state.currentView === "entry") {
+                scheduleEntryViewportSync();
+              }
+            }, 40);
+          });
+        });
 
         els.editCancelButton.addEventListener("click", closeEditModal);
         els.editSaveButton.addEventListener("click", saveEditedWord);
@@ -1415,7 +1420,7 @@ Provider: OpenAI compatible</div>
           }
         });
 
-        bindViewportWatch();
+        bindEntryViewportWatch();
       }
 
       async function restoreApp() {
@@ -1473,9 +1478,6 @@ Provider: OpenAI compatible</div>
         if (typeof options.highlightWordId === "number") {
           state.pendingHighlightWordId = options.highlightWordId;
         }
-        if (options.deferSwipeMount) {
-          state.swipeReadyAt = performance.now() + 760;
-        }
 
         updateModeButtons();
         showView("list");
@@ -1494,14 +1496,12 @@ Provider: OpenAI compatible</div>
           return;
         }
         state.currentView = "entry";
-        state.activeEntryInput = null;
         showView("entry");
         resetEntryForm();
+        state.entryFocusMode = "page";
         els.entryNotebookTitle.textContent = formatNotebookTitle(notebook);
-        if (els.entryShell) {
-          els.entryShell.scrollTop = 0;
-        }
-        syncEntryViewport();
+        applyEntryKeyboardLift(0, 0);
+        scheduleEntryViewportSync(true);
       }
 
       async function openSettings() {
@@ -1509,7 +1509,7 @@ Provider: OpenAI compatible</div>
         showView("settings");
         const appState = await getAppState();
         els.apiKeyInput.value = appState.apiKey || "";
-        els.settingsModelInput.value = appState.modelName || "Qwen/Qwen3-8B";
+        els.modelInput.value = appState.modelName || "Qwen/Qwen3-8B";
         requestAnimationFrame(() => {
           els.apiKeyInput.focus();
           els.apiKeyInput.setSelectionRange(els.apiKeyInput.value.length, els.apiKeyInput.value.length);
@@ -1541,6 +1541,13 @@ Provider: OpenAI compatible</div>
         if (name !== "search") {
           cancelMeaningRequests();
         }
+        if (name !== "list") {
+          cancelListEffects();
+        }
+        if (name !== "entry") {
+          clearEntryViewportTimers();
+          applyEntryKeyboardLift(0, 0);
+        }
 
         const views = {
           shelf: els.shelfView,
@@ -1553,11 +1560,6 @@ Provider: OpenAI compatible</div>
         Object.entries(views).forEach(([key, node]) => {
           node.classList.toggle("active", key === name);
         });
-
-        if (name !== "entry") {
-          state.activeEntryInput = null;
-        }
-        syncEntryViewport();
       }
 
       function renderShelf() {
@@ -1652,13 +1654,12 @@ Provider: OpenAI compatible</div>
       // 根据当前笔记本、排序方式、筛选方式渲染列表。
       function renderList() {
         const notebook = getCurrentNotebook();
+        cancelListEffects();
         if (!notebook) {
           els.wordList.innerHTML = '<div class="empty-block"></div>';
           return;
         }
 
-        cancelSwipeEnableTimer();
-        closeAllSwipes();
         els.listNotebookTitle.textContent = formatNotebookTitle(notebook);
 
         let rows = state.words.filter((word) => word.notebookId === notebook.id);
@@ -1670,16 +1671,14 @@ Provider: OpenAI compatible</div>
         rows = sortWords(rows, state.sortMode);
 
         els.wordList.innerHTML = "";
+        closeAllSwipes();
 
         if (!rows.length) {
           els.wordList.innerHTML = '<div class="empty-block"></div>';
           return;
         }
 
-        const pendingHighlightId = typeof state.pendingHighlightWordId === "number"
-          ? state.pendingHighlightWordId
-          : null;
-        const shouldDelaySwipe = pendingHighlightId !== null;
+        const deferSwipeMount = typeof state.pendingHighlightWordId === "number";
         const pendingItems = [];
 
         rows.forEach((record) => {
@@ -1689,10 +1688,10 @@ Provider: OpenAI compatible</div>
           item.innerHTML = `
             <div class="swipe-actions">
               <button class="row-action edit" type="button" data-action="edit" aria-label="编辑">
-                <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 20L8.5 19L18.5 9L15 5.5L5 15.5L4 20Z"></path><path d="M13.5 6.5L17.5 10.5"></path></svg>
+                <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M5 19l4-.8L18 9.2 14.8 6 5.8 15z"></path><path d="M13.5 7.3l3.2 3.2"></path></svg>
               </button>
               <button class="row-action delete" type="button" data-action="delete" aria-label="删除">
-                <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M6 7H18"></path><path d="M9 7V5H15V7"></path><path d="M8 7L9 19H15L16 7"></path><path d="M10 10V16"></path><path d="M14 10V16"></path></svg>
+                <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M6 7h12"></path><path d="M9 7V5h6v2"></path><path d="M8 7l.8 11h6.4L16 7"></path><path d="M10 10v5"></path><path d="M14 10v5"></path></svg>
               </button>
             </div>
             <div class="swipe-content">
@@ -1713,7 +1712,7 @@ Provider: OpenAI compatible</div>
             closeAllSwipes();
             const choice = await showDialog({
               title: "删除记录？",
-              text: `${record.word} · p.${formatPageNumber(record.page)}`,
+              text: `${record.word} · p.${record.page}`,
               buttons: [
                 { text: "取消", value: "cancel" },
                 { text: "删除", value: "delete", variant: "dark" }
@@ -1726,43 +1725,40 @@ Provider: OpenAI compatible</div>
             }
           });
 
-          if (!shouldDelaySwipe) {
-            setupSwipe(item);
-          } else {
+          if (deferSwipeMount) {
             pendingItems.push(item);
+          } else {
+            setupSwipe(item);
           }
-
           els.wordList.appendChild(item);
         });
 
-        if (pendingHighlightId !== null) {
-          const target = els.wordList.querySelector(`.word-item[data-id="${pendingHighlightId}"]`);
+        if (deferSwipeMount) {
+          const targetId = state.pendingHighlightWordId;
           state.pendingHighlightWordId = null;
+          const target = els.wordList.querySelector(`.word-item[data-id="${targetId}"]`);
           if (target) {
-            state.swipeReadyAt = performance.now() + 760;
+            const delay = window.matchMedia("(prefers-reduced-motion: reduce)").matches ? 0 : 340;
+            const listHeight = els.wordList.clientHeight || 0;
+            const targetTop = Math.max(0, target.offsetTop - Math.max(20, Math.round((listHeight - target.offsetHeight) / 2)));
+            els.wordList.classList.add("swipe-suspended");
             requestAnimationFrame(() => {
-              const listRect = els.wordList.getBoundingClientRect();
-              const targetRect = target.getBoundingClientRect();
-              const currentTop = els.wordList.scrollTop;
-              const targetTop = currentTop + (targetRect.top - listRect.top) - Math.max(18, (listRect.height - targetRect.height) * 0.34);
-              els.wordList.scrollTo({ top: Math.max(0, targetTop), behavior: "smooth" });
-              cancelSwipeEnableTimer();
-              state.swipeEnableTimer = window.setTimeout(() => {
-                pendingItems.forEach(setupSwipe);
-                target.classList.add("flash-highlight");
-                window.setTimeout(() => {
-                  target.classList.remove("flash-highlight");
-                }, 1300);
-                state.swipeEnableTimer = null;
-              }, 480);
+              els.wordList.scrollTo({
+                top: targetTop,
+                behavior: delay ? "smooth" : "auto"
+              });
             });
+            state.listHighlightTimer = window.setTimeout(() => {
+              target.classList.add("flash-highlight");
+              window.setTimeout(() => {
+                target.classList.remove("flash-highlight");
+              }, 1300);
+            }, delay);
+            scheduleListSwipeMount(pendingItems, delay + 220);
           } else {
-            pendingItems.forEach(setupSwipe);
+            scheduleListSwipeMount(pendingItems, 320);
           }
-          return;
         }
-
-        state.pendingHighlightWordId = null;
       }
 
       // 全局搜索：在全部笔记本内实时筛选，点击结果后跳转并定位。
@@ -1842,8 +1838,7 @@ Provider: OpenAI compatible</div>
             await openNotebook(result.notebookId, {
               sortMode: "page",
               filterMode: "all",
-              highlightWordId: result.id,
-              deferSwipeMount: true
+              highlightWordId: result.id
             });
           });
           els.searchResults.appendChild(row);
@@ -1861,7 +1856,7 @@ Provider: OpenAI compatible</div>
         const apiKey = String(els.apiKeyInput.value || "")
           .trim()
           .replace(/^Bearer\s+/i, "");
-        const modelName = String(els.settingsModelInput.value || "").trim() || "Qwen/Qwen3-8B";
+        const modelName = String(els.modelInput.value || "").trim() || "Qwen/Qwen3-8B";
 
         await saveAppState({ apiKey, modelName });
         const button = els.settingsSaveButton;
@@ -1874,58 +1869,134 @@ Provider: OpenAI compatible</div>
         }, 900);
       }
 
-      function bindViewportWatch() {
+      function bindEntryViewportWatch() {
         const viewport = window.visualViewport;
-
-        const schedule = () => {
-          requestAnimationFrame(syncEntryViewport);
+        const update = () => {
+          if (state.currentView === "entry") {
+            updateEntryViewportPosition();
+          }
         };
 
         if (viewport) {
-          viewport.addEventListener("resize", schedule);
-          viewport.addEventListener("scroll", schedule);
+          viewport.addEventListener("resize", update);
+          viewport.addEventListener("scroll", update);
         }
 
+        window.addEventListener("resize", update);
         window.addEventListener("orientationchange", () => {
-          window.setTimeout(schedule, 180);
+          clearEntryViewportTimers();
+          window.setTimeout(() => {
+            applyEntryKeyboardLift(0, 0);
+            if (state.currentView === "entry") {
+              scheduleEntryViewportSync(true);
+            }
+          }, 180);
         });
-
-        window.addEventListener("resize", schedule);
-        schedule();
       }
 
-      function syncEntryViewport() {
-        const viewport = window.visualViewport;
-        const viewportTop = viewport ? viewport.offsetTop : 0;
-        const viewportHeight = viewport ? viewport.height : window.innerHeight;
-        const visibleBottom = viewportTop + viewportHeight;
-        const keyboardOffset = Math.max(0, (window.innerHeight || document.documentElement.clientHeight) - visibleBottom);
-
-        document.documentElement.style.setProperty("--keyboard-offset", `${keyboardOffset}px`);
-
-        if (state.currentView !== "entry" || !els.entryWrap || !els.entryRow || !els.entryActions) {
-          document.documentElement.style.setProperty("--keyboard-lift", "0px");
-          return;
+      function clearEntryViewportTimers() {
+        if (state.entryViewportRaf) {
+          cancelAnimationFrame(state.entryViewportRaf);
+          state.entryViewportRaf = 0;
         }
+        state.entryViewportTimers.forEach((timer) => clearTimeout(timer));
+        state.entryViewportTimers = [];
+      }
 
-        if (els.entryShell) {
-          els.entryShell.scrollTop = 0;
-        }
-
-        if (!state.activeEntryInput) {
-          document.documentElement.style.setProperty("--keyboard-lift", "0px");
-          return;
-        }
-
-        const rowRect = els.entryRow.getBoundingClientRect();
-        const actionsRect = els.entryActions.getBoundingClientRect();
-        const inputRect = state.activeEntryInput.getBoundingClientRect();
-        const desiredBottom = Math.max(actionsRect.bottom, inputRect.bottom, rowRect.bottom);
-        const safeBottom = 18;
-        const overflow = Math.max(0, desiredBottom - (visibleBottom - safeBottom));
-        const lift = overflow > 0 ? -Math.min(120, Math.round(overflow + 4)) : 0;
-
+      function applyEntryKeyboardLift(lift, offset) {
+        state.entryKeyboardLift = lift;
         document.documentElement.style.setProperty("--keyboard-lift", `${lift}px`);
+        document.documentElement.style.setProperty("--keyboard-offset", `${offset}px`);
+      }
+
+      function getEntryVisibleBottom() {
+        const viewport = window.visualViewport;
+        return viewport ? viewport.height + viewport.offsetTop : window.innerHeight;
+      }
+
+      function updateEntryViewportPosition() {
+        if (state.currentView !== "entry" || !els.entryWrap) {
+          return;
+        }
+
+        const visibleBottom = getEntryVisibleBottom();
+        const currentLift = state.entryKeyboardLift || 0;
+        const wrapRect = els.entryWrap.getBoundingClientRect();
+        const naturalBottom = wrapRect.bottom + currentLift;
+        const reserve = 16 + Math.max(0, Math.round(window.visualViewport ? window.visualViewport.offsetTop : 0));
+        const targetBottom = visibleBottom - 18;
+        const viewportGap = Math.max(0, Math.round((window.innerHeight || visibleBottom) - visibleBottom));
+
+        let lift = Math.max(0, Math.round(naturalBottom - targetBottom));
+        if (viewportGap < 100) {
+          lift = 0;
+        } else {
+          lift = Math.min(132, Math.max(0, lift + Math.max(0, reserve - 8)));
+        }
+
+        applyEntryKeyboardLift(lift, viewportGap);
+      }
+
+      function scheduleEntryViewportSync(reset = false) {
+        if (reset) {
+          applyEntryKeyboardLift(0, 0);
+        }
+        clearEntryViewportTimers();
+        const delays = [0, 70, 160, 280, 420];
+        delays.forEach((delay) => {
+          const timer = window.setTimeout(() => {
+            if (state.entryViewportRaf) {
+              cancelAnimationFrame(state.entryViewportRaf);
+            }
+            state.entryViewportRaf = requestAnimationFrame(() => {
+              updateEntryViewportPosition();
+            });
+          }, delay);
+          state.entryViewportTimers.push(timer);
+        });
+      }
+
+      function refocusEntryWordSoon() {
+        if (state.currentView !== "entry") {
+          return;
+        }
+        requestAnimationFrame(() => {
+          els.entryWordInput.focus({ preventScroll: true });
+          scheduleEntryViewportSync();
+        });
+      }
+
+      function cancelListEffects() {
+        if (state.listSwipeMountTimer) {
+          clearTimeout(state.listSwipeMountTimer);
+          state.listSwipeMountTimer = null;
+        }
+        if (state.listHighlightTimer) {
+          clearTimeout(state.listHighlightTimer);
+          state.listHighlightTimer = null;
+        }
+        els.wordList.classList.remove("swipe-suspended");
+      }
+
+      function cancelListSwipeMount() {
+        if (state.listSwipeMountTimer) {
+          clearTimeout(state.listSwipeMountTimer);
+          state.listSwipeMountTimer = null;
+        }
+        els.wordList.classList.remove("swipe-suspended");
+      }
+
+      function scheduleListSwipeMount(items, delay = 0) {
+        cancelListSwipeMount();
+        els.wordList.classList.add("swipe-suspended");
+        state.listSwipeMountTimer = window.setTimeout(() => {
+          if (state.currentView !== "list") {
+            return;
+          }
+          items.forEach((item) => setupSwipe(item));
+          els.wordList.classList.remove("swipe-suspended");
+          state.listSwipeMountTimer = null;
+        }, Math.max(0, delay));
       }
 
       function cancelMeaningRequests() {
@@ -2054,8 +2125,6 @@ v.固着生长
         const valid = isValidPage(els.entryPageInput.value) && hasWordValue(els.entryWordInput.value);
         els.entrySaveButton.disabled = !valid;
         els.entrySaveNextButton.disabled = !valid;
-        els.entrySaveButton.classList.toggle("ready", valid);
-        els.entrySaveNextButton.classList.toggle("ready", valid);
       }
 
       function updateEditButtons() {
@@ -2071,6 +2140,9 @@ v.固着生长
           updateEntryButtons();
           return;
         }
+
+        state.entryFocusMode = "word";
+        refocusEntryWordSoon();
 
         const button = mode === "next" ? els.entrySaveNextButton : els.entrySaveButton;
         flashButton(button);
@@ -2093,16 +2165,7 @@ v.固着生长
         }
 
         updateEntryButtons();
-
-        requestAnimationFrame(() => {
-          try {
-            els.entryWordInput.focus({ preventScroll: true });
-          } catch (error) {
-            els.entryWordInput.focus();
-          }
-          state.activeEntryInput = els.entryWordInput;
-          syncEntryViewport();
-        });
+        refocusEntryWordSoon();
       }
 
       function flashButton(button) {
@@ -2110,18 +2173,6 @@ v.固着生长
         window.setTimeout(() => {
           button.classList.remove("flash");
         }, 200);
-      }
-
-      function cancelSwipeEnableTimer() {
-        if (state.swipeEnableTimer) {
-          clearTimeout(state.swipeEnableTimer);
-          state.swipeEnableTimer = null;
-        }
-      }
-
-      function formatPageNumber(value) {
-        const number = Math.max(0, Number(value) || 0);
-        return String(number).padStart(3, "0");
       }
 
       function getCurrentNotebook() {
@@ -2152,13 +2203,12 @@ v.固着生长
         return list.sort((a, b) => b.createdAt - a.createdAt);
       }
 
-      // 左滑交互：增加方向锁、速度判断和边缘阻尼，并加上轻微回弹。
+      // 左滑交互：方向锁、速度判断与边缘缓冲，手感更接近平滑减速而非硬停。
       function setupSwipe(item) {
         if (item.dataset.swipeBound === "1") {
           return;
         }
         item.dataset.swipeBound = "1";
-
         const content = item.querySelector(".swipe-content");
         let startX = 0;
         let startY = 0;
@@ -2170,50 +2220,49 @@ v.固着生长
         let lastTime = 0;
         let velocityX = 0;
         let moved = false;
-        let draggedEnough = false;
 
         const getOffset = () => Number(item.dataset.offset || "0");
 
-        const clamp = (value) => Math.max(-SWIPE_WIDTH, Math.min(0, value));
-
-        const visualOffset = (value) => {
-          if (value > 0) {
-            return value * 0.22;
+        const softenOffset = (value) => {
+          let next = value;
+          if (next > 0) {
+            next *= 0.16;
           }
-          if (value < -SWIPE_WIDTH) {
-            return -SWIPE_WIDTH + (value + SWIPE_WIDTH) * 0.24;
+          const abs = Math.abs(next);
+          const edgeStart = SWIPE_WIDTH * 0.72;
+          if (abs > edgeStart && next < 0) {
+            const extra = abs - edgeStart;
+            next = -(edgeStart + extra * 0.42);
           }
-          return value;
+          if (next < -SWIPE_WIDTH) {
+            next = -SWIPE_WIDTH - (Math.abs(next) - SWIPE_WIDTH) * 0.12;
+          }
+          return next;
         };
 
-        const setOffset = (value, withTransition = false, elastic = false) => {
-          const clamped = clamp(value);
-          item.dataset.offset = String(clamped);
+        const setOffset = (value, withTransition) => {
+          let next = withTransition ? Math.max(-SWIPE_WIDTH, Math.min(0, value)) : softenOffset(value);
+          item.dataset.offset = String(next);
           content.style.transition = withTransition
-            ? "transform 240ms cubic-bezier(0.25, 1.5, 0.5, 1)"
+            ? "transform 220ms cubic-bezier(0.22, 1, 0.36, 1)"
             : "none";
-          content.style.transform = `translateX(${elastic ? visualOffset(value) : clamped}px)`;
+          content.style.transform = `translateX(${next}px)`;
         };
 
         const finish = (target) => {
-          setOffset(target, true, false);
+          setOffset(target, true);
         };
 
         content.addEventListener("pointerdown", (event) => {
-          if (performance.now() < state.swipeReadyAt) {
-            return;
-          }
           if (event.pointerType === "mouse" && event.button !== 0) {
             return;
           }
           if (event.target.closest("button")) {
             return;
           }
-
           closeAllSwipes(item);
           dragging = true;
           moved = false;
-          draggedEnough = false;
           pointerId = event.pointerId;
           axis = null;
           startX = event.clientX;
@@ -2223,7 +2272,6 @@ v.固着生长
           lastTime = performance.now();
           velocityX = 0;
           content.style.willChange = "transform";
-
           if (content.setPointerCapture) {
             content.setPointerCapture(pointerId);
           }
@@ -2238,19 +2286,10 @@ v.固着生长
           const deltaY = event.clientY - startY;
 
           if (!axis) {
-            const absX = Math.abs(deltaX);
-            const absY = Math.abs(deltaY);
-            if (absX < 7 && absY < 7) {
+            if (Math.abs(deltaX) < 5 && Math.abs(deltaY) < 5) {
               return;
             }
-            if (absX > absY + 5 && absX > 8) {
-              axis = "x";
-            } else if (absY > absX + 5 && absY > 8) {
-              axis = "y";
-              return;
-            } else {
-              return;
-            }
+            axis = Math.abs(deltaX) > Math.abs(deltaY) * 1.12 ? "x" : "y";
           }
 
           if (axis !== "x") {
@@ -2258,14 +2297,13 @@ v.固着生长
           }
 
           moved = true;
-          draggedEnough = draggedEnough || Math.abs(deltaX) > 10;
           event.preventDefault();
           const now = performance.now();
-          const dt = Math.max(12, now - lastTime);
+          const dt = Math.max(16, now - lastTime);
           velocityX = (event.clientX - lastX) / dt;
           lastX = event.clientX;
           lastTime = now;
-          setOffset(startOffset + deltaX, false, true);
+          setOffset(startOffset + deltaX, false);
         });
 
         const endDrag = (event) => {
@@ -2286,9 +2324,9 @@ v.固着生长
             return;
           }
 
-          const offset = getOffset();
-          const shouldOpen = offset < -SWIPE_WIDTH * 0.36 || velocityX < -0.28;
-          const shouldClose = offset > -SWIPE_WIDTH * 0.18 || velocityX > 0.24;
+          const offset = Math.max(-SWIPE_WIDTH, Math.min(0, getOffset()));
+          const shouldOpen = offset < -SWIPE_WIDTH * 0.4 || velocityX < -0.3;
+          const shouldClose = offset > -SWIPE_WIDTH * 0.15 || velocityX > 0.22;
           finish(shouldOpen && !shouldClose ? -SWIPE_WIDTH : 0);
 
           pointerId = null;
@@ -2299,14 +2337,10 @@ v.固着生长
         content.addEventListener("pointercancel", endDrag);
 
         content.addEventListener("click", (event) => {
-          if (draggedEnough) {
-            draggedEnough = false;
+          if (moved) {
             moved = false;
-            event.preventDefault();
-            event.stopPropagation();
             return;
           }
-          moved = false;
           const offset = getOffset();
           if (offset < -8) {
             event.preventDefault();
@@ -2325,7 +2359,7 @@ v.固着生长
           if (content) {
             item.dataset.offset = "0";
             content.style.transform = "translateX(0)";
-            content.style.transition = "transform 240ms cubic-bezier(0.25, 1.5, 0.5, 1)";
+            content.style.transition = "transform 220ms cubic-bezier(0.22, 1, 0.36, 1)";
           }
         });
       }
@@ -2446,6 +2480,11 @@ v.固着生长
 
       function hasWordValue(value) {
         return String(value || "").trim().length > 0;
+      }
+
+      function formatPageNumber(value) {
+        const num = Number(value) || 0;
+        return String(Math.max(0, num)).padStart(3, "0");
       }
 
       function formatNotebookTitle(notebook) {
