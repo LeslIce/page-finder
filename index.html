@@ -35,6 +35,7 @@
       --safe-left: env(safe-area-inset-left, 0px);
       --ui-sans: "Quicksand", -apple-system, BlinkMacSystemFont, "Helvetica Neue", Arial, sans-serif;
       --title-sans: -apple-system, BlinkMacSystemFont, "Helvetica Neue", Arial, sans-serif;
+      --button-gray: #cfcfd4;
     }
 
     * {
@@ -151,14 +152,14 @@
     .notebook-title {
       min-width: 0;
       font-family: var(--title-sans);
-      font-size: clamp(1.34rem, 5vw, 1.56rem);
+      font-size: clamp(1.34rem, 5.1vw, 1.68rem);
       font-weight: 500;
       line-height: 1.08;
       letter-spacing: -0.022em;
       white-space: nowrap;
       overflow: hidden;
       text-overflow: ellipsis;
-      padding-right: 52px;
+      padding-right: 12px;
     }
 
     .search-trigger {
@@ -177,7 +178,7 @@
 
     .search-trigger.compact {
       margin-top: 14px;
-      margin-right: 42px;
+      margin-right: 4px;
     }
 
     .search-trigger-icon {
@@ -262,7 +263,7 @@
       display: flex;
       align-items: center;
       justify-content: center;
-      font-family: var(--ui-sans);
+      font-family: "Quicksand", "Helvetica Neue", Arial, sans-serif;
       font-size: 2.5rem;
       line-height: 1;
       color: var(--black);
@@ -286,10 +287,10 @@
     .mode-dock {
       position: absolute;
       right: calc(10px + var(--safe-right));
-      bottom: calc(154px + var(--safe-bottom));
+      bottom: calc(138px + var(--safe-bottom));
       display: flex;
       flex-direction: column;
-      gap: 14px;
+      gap: 18px;
       z-index: 8;
     }
 
@@ -303,12 +304,16 @@
       align-items: center;
       justify-content: center;
       font-family: var(--ui-sans);
-      font-size: 0.88rem;
+      font-size: 0.92rem;
       line-height: 1;
       padding: 0;
       transition: background-color 160ms ease, transform 160ms ease;
       border: 1px solid transparent;
-      flex: 0 0 auto;
+    }
+
+    .mode-button svg {
+      width: 14px;
+      height: 14px;
     }
 
     .mode-button.active {
@@ -325,12 +330,10 @@
       min-height: 0;
       overflow: auto;
       margin-top: 16px;
-      padding-right: 46px;
+      padding-right: 48px;
       border-top: 1px solid var(--line);
-    }
-
-    .word-list.swipe-suspended {
-      pointer-events: none;
+      overscroll-behavior: contain;
+      overflow-anchor: none;
     }
 
     .word-item {
@@ -362,7 +365,7 @@
       top: 0;
       right: 0;
       bottom: 0;
-      width: 112px;
+      width: 136px;
       display: flex;
       align-items: stretch;
       justify-content: stretch;
@@ -380,6 +383,12 @@
       width: 18px;
       height: 18px;
       display: block;
+      stroke: currentColor;
+      fill: none;
+      stroke-width: 2;
+      stroke-linecap: square;
+      stroke-linejoin: miter;
+      vector-effect: non-scaling-stroke;
     }
 
     .row-action.edit {
@@ -394,26 +403,27 @@
       position: relative;
       z-index: 1;
       width: 100%;
-      min-height: 58px;
+      min-height: 56px;
       display: grid;
-      grid-template-columns: auto 1fr;
+      grid-template-columns: 54px 1fr;
       align-items: center;
       gap: 10px;
-      padding: 0 4px 0 0;
+      padding: 0 2px 0 0;
       background: var(--white);
       transform: translateX(0);
-      transition: transform 180ms ease;
+      transition: transform 240ms cubic-bezier(0.25, 1.5, 0.5, 1);
     }
 
     .list-page {
-      min-width: 52px;
-      padding-left: 2px;
+      min-width: 54px;
+      padding-left: 4px;
       font-size: 0.94rem;
-      letter-spacing: 0.04em;
+      letter-spacing: 0.08em;
       color: var(--mint-solid);
       white-space: nowrap;
       font-family: var(--ui-sans);
       font-weight: 700;
+      font-variant-numeric: tabular-nums;
     }
 
     .list-word {
@@ -445,7 +455,7 @@
       display: inline-flex;
       align-items: center;
       justify-content: center;
-      font-family: var(--ui-sans);
+      font-family: "Quicksand", "Helvetica Neue", Arial, sans-serif;
       font-size: 1.35rem;
       line-height: 1;
       z-index: 7;
@@ -460,14 +470,16 @@
       display: flex;
       flex-direction: column;
       padding-bottom: calc(24px + var(--safe-bottom));
-      scroll-padding-bottom: calc(132px + var(--keyboard-offset));
+      scroll-padding-bottom: calc(120px + var(--keyboard-offset));
+      overflow: auto;
+      overscroll-behavior: contain;
     }
 
     .entry-wrap {
       display: flex;
       flex-direction: column;
-      gap: 34px;
-      margin-top: clamp(218px, 34vh, 322px);
+      gap: 30px;
+      margin-top: clamp(188px, 31vh, 334px);
       transform: translateY(var(--keyboard-lift));
       transition: transform 220ms ease;
       padding-top: 0;
@@ -475,15 +487,11 @@
 
     .entry-title {
       font-family: var(--title-sans);
-      font-size: clamp(1.3rem, 4.8vw, 1.48rem);
+      font-size: clamp(1.34rem, 5.1vw, 1.68rem);
       font-weight: 500;
       line-height: 1.08;
-      letter-spacing: -0.02em;
+      letter-spacing: -0.022em;
       color: var(--black);
-      white-space: nowrap;
-      overflow: hidden;
-      text-overflow: ellipsis;
-      padding-right: 12px;
     }
 
     .entry-row {
@@ -510,7 +518,7 @@
 
     .entry-page {
       text-align: center;
-      font-family: var(--ui-sans);
+      font-family: "Quicksand", "Helvetica Neue", Arial, sans-serif;
     }
 
     .entry-word {
@@ -566,12 +574,13 @@
       width: 60px;
       height: 60px;
       border-radius: 999px;
-      background: #cfcfd3;
+      background: var(--button-gray);
       color: var(--white);
       display: inline-flex;
       align-items: center;
       justify-content: center;
-      transition: transform 130ms ease, background-color 130ms ease;
+      line-height: 1;
+      transition: transform 130ms ease, opacity 130ms ease, background-color 130ms ease;
       flex: 0 0 auto;
     }
 
@@ -579,15 +588,23 @@
       width: 26px;
       height: 26px;
       display: block;
+      stroke: currentColor;
+      fill: none;
+      stroke-width: 2.1;
+      stroke-linecap: square;
+      stroke-linejoin: miter;
+      vector-effect: non-scaling-stroke;
     }
 
-    .entry-button.flash,
-    .entry-button.can-save {
-      background: var(--mint);
-    }
-
-    .entry-button.cancel {
+    .entry-button.back {
       background: var(--black);
+      color: var(--white);
+    }
+
+    .entry-button.ready,
+    .entry-button.flash {
+      background: var(--mint);
+      color: var(--white);
     }
 
     .entry-button:disabled {
@@ -619,7 +636,7 @@
     }
 
     .search-input::placeholder {
-      color: rgba(255, 255, 255, 0.82);
+      color: rgba(255, 255, 255, 0.76);
     }
 
     .search-input::-webkit-search-cancel-button {
@@ -636,9 +653,9 @@
     .search-row {
       width: 100%;
       display: grid;
-      grid-template-columns: 60px 52px minmax(0, 1fr);
+      grid-template-columns: 54px 46px minmax(0, 1fr);
       align-items: flex-start;
-      gap: 8px 10px;
+      gap: 8px 8px;
       min-height: 64px;
       padding: 12px 2px 11px 0;
       border-bottom: 1px solid var(--line);
@@ -656,11 +673,12 @@
       justify-content: flex-start;
       color: var(--mint-solid);
       font-family: var(--ui-sans);
-      font-size: 1.28rem;
+      font-size: 1.5rem;
       font-weight: 700;
       line-height: 1;
       padding-top: 4px;
-      padding-left: 10px;
+      padding-left: 8px;
+      font-variant-numeric: tabular-nums;
     }
 
     .search-page {
@@ -669,6 +687,7 @@
       white-space: nowrap;
       padding-top: 5px;
       font-family: var(--ui-sans);
+      font-variant-numeric: tabular-nums;
     }
 
     .search-body {
@@ -711,9 +730,9 @@
 
     .settings-title {
       font-family: var(--title-sans);
-      font-size: 1.18rem;
+      font-size: clamp(1.28rem, 4.9vw, 1.52rem);
       font-weight: 500;
-      line-height: 1.15;
+      line-height: 1.12;
     }
 
     .settings-label {
@@ -730,7 +749,7 @@
       color: var(--black);
       font-size: 0.98rem;
       line-height: 1.2;
-      font-family: var(--ui-sans);
+      font-family: "Quicksand", "Helvetica Neue", Arial, sans-serif;
     }
 
     .settings-input::placeholder {
@@ -752,7 +771,7 @@
       display: inline-flex;
       align-items: center;
       justify-content: center;
-      font-family: var(--ui-sans);
+      font-family: "Quicksand", "Helvetica Neue", Arial, sans-serif;
       font-size: 1rem;
       line-height: 1;
       padding: 0 18px;
@@ -811,7 +830,7 @@
       min-height: 38px;
       padding: 0 14px;
       border-radius: 999px;
-      font-family: var(--ui-sans);
+      font-family: "Quicksand", "Helvetica Neue", Arial, sans-serif;
       font-size: 0.92rem;
       line-height: 1;
       border: 1px solid var(--black);
@@ -851,11 +870,11 @@
       }
 
       .mode-dock {
-        right: max(calc((100vw - 720px) / 2 + 10px), 10px);
+        right: max(calc((100vw - 720px) / 2 + 12px), 12px);
       }
 
       .entry-wrap {
-        margin-top: 236px;
+        margin-top: 200px;
       }
 
       .add-word-button {
@@ -983,23 +1002,15 @@
             </label>
           </div>
 
-          <div class="entry-actions">
-            <button id="entryCancelButton" class="entry-button cancel" type="button" aria-label="返回">
-              <svg viewBox="0 0 24 24" fill="none" aria-hidden="true">
-                <path d="M5 12H19" stroke="currentColor" stroke-width="2.2" stroke-linecap="butt"></path>
-                <path d="M11 6L5 12L11 18" stroke="currentColor" stroke-width="2.2" stroke-linecap="butt" stroke-linejoin="miter"></path>
-              </svg>
+          <div id="entryActions" class="entry-actions">
+            <button id="entryCancelButton" class="entry-button back" type="button" aria-label="返回">
+              <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M20 12H6"></path><path d="M11 7L6 12L11 17"></path></svg>
             </button>
             <button id="entrySaveButton" class="entry-button" type="button" aria-label="保存">
-              <svg viewBox="0 0 24 24" fill="none" aria-hidden="true">
-                <path d="M5.5 12.5L10.5 17.5L18.5 7.5" stroke="currentColor" stroke-width="2.2" stroke-linecap="butt" stroke-linejoin="miter"></path>
-              </svg>
+              <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M6 13L10.5 17.5L18 8"></path></svg>
             </button>
             <button id="entrySaveNextButton" class="entry-button" type="button" aria-label="保存并下一页">
-              <svg viewBox="0 0 24 24" fill="none" aria-hidden="true">
-                <path d="M5 12H19" stroke="currentColor" stroke-width="2.2" stroke-linecap="butt"></path>
-                <path d="M13 6L19 12L13 18" stroke="currentColor" stroke-width="2.2" stroke-linecap="butt" stroke-linejoin="miter"></path>
-              </svg>
+              <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 12H18"></path><path d="M13 7L18 12L13 17"></path></svg>
             </button>
           </div>
         </div>
@@ -1027,7 +1038,7 @@
           />
           <div class="settings-label">模型名称</div>
           <input
-            id="modelInput"
+            id="settingsModelInput"
             class="settings-input"
             type="text"
             autocapitalize="none"
@@ -1037,7 +1048,8 @@
             placeholder="Qwen/Qwen3-8B"
             aria-label="模型名称"
           />
-          <div class="settings-hint">Base URL: https://api.siliconflow.cn/v1</div>
+          <div class="settings-hint">Base URL: https://api.siliconflow.cn/v1
+Provider: OpenAI compatible</div>
           <button id="settingsSaveButton" class="settings-save-button" type="button">保存</button>
         </div>
       </div>
@@ -1117,7 +1129,7 @@
       const DB_VERSION = 1;
       const APP_STATE_ID = "main";
       const MAX_NOTEBOOKS = 30;
-      const SWIPE_WIDTH = 112;
+      const SWIPE_WIDTH = 136;
 
       const state = {
         db: null,
@@ -1134,11 +1146,10 @@
         searchMeaningController: null,
         searchMeaningTimer: null,
         searchMeaningToken: 0,
-        ignoreSwipeUntil: 0,
-        listInteractionTimer: null,
-        entryViewportBase: 0,
-        entryViewportTimer: null,
-        entryKeyboardSettlingUntil: 0
+        viewportBaseHeight: window.innerHeight || 0,
+        activeEntryInput: null,
+        swipeEnableTimer: null,
+        swipeReadyAt: 0
       };
 
       const els = {};
@@ -1184,7 +1195,7 @@
         els.openSettingsButton = document.getElementById("openSettingsButton");
         els.settingsBackButton = document.getElementById("settingsBackButton");
         els.apiKeyInput = document.getElementById("apiKeyInput");
-        els.modelInput = document.getElementById("modelInput");
+        els.settingsModelInput = document.getElementById("settingsModelInput");
         els.settingsSaveButton = document.getElementById("settingsSaveButton");
 
         els.backToShelfButton = document.getElementById("backToShelfButton");
@@ -1198,6 +1209,10 @@
         els.entryPageInput = document.getElementById("entryPageInput");
         els.entryWordInput = document.getElementById("entryWordInput");
         els.entryAnalysisInput = document.getElementById("entryAnalysisInput");
+        els.entryShell = els.entryView.querySelector('.entry-shell');
+        els.entryWrap = els.entryView.querySelector('.entry-wrap');
+        els.entryRow = els.entryView.querySelector('.entry-row');
+        els.entryActions = document.getElementById("entryActions");
 
         els.sortPageButton = document.getElementById("sortPageButton");
         els.sortAlphaButton = document.getElementById("sortAlphaButton");
@@ -1294,12 +1309,31 @@
         els.entrySaveNextButton.addEventListener("click", () => handleEntrySave("next"));
 
         els.searchInput.addEventListener("input", renderSearchResults);
-        [els.apiKeyInput, els.modelInput].forEach((input) => {
-          input.addEventListener("keydown", (event) => {
-            if (event.key === "Enter") {
-              event.preventDefault();
-              saveSettings();
+        els.apiKeyInput.addEventListener("keydown", (event) => {
+          if (event.key === "Enter") {
+            event.preventDefault();
+            saveSettings();
+          }
+        });
+        els.settingsModelInput.addEventListener("keydown", (event) => {
+          if (event.key === "Enter") {
+            event.preventDefault();
+            saveSettings();
+          }
+        });
+
+        [els.entryPageInput, els.entryWordInput].forEach((input) => {
+          input.addEventListener("focus", () => {
+            state.activeEntryInput = input;
+            syncEntryViewport();
+            window.setTimeout(syncEntryViewport, 80);
+            window.setTimeout(syncEntryViewport, 180);
+          });
+          input.addEventListener("blur", () => {
+            if (state.activeEntryInput === input) {
+              state.activeEntryInput = null;
             }
+            window.setTimeout(syncEntryViewport, 60);
           });
         });
 
@@ -1439,8 +1473,8 @@
         if (typeof options.highlightWordId === "number") {
           state.pendingHighlightWordId = options.highlightWordId;
         }
-        if (options.fromSearch) {
-          state.ignoreSwipeUntil = performance.now() + 760;
+        if (options.deferSwipeMount) {
+          state.swipeReadyAt = performance.now() + 760;
         }
 
         updateModeButtons();
@@ -1460,12 +1494,14 @@
           return;
         }
         state.currentView = "entry";
+        state.activeEntryInput = null;
         showView("entry");
         resetEntryForm();
         els.entryNotebookTitle.textContent = formatNotebookTitle(notebook);
-        state.entryViewportBase = getViewportLayoutHeight();
-        state.entryKeyboardSettlingUntil = 0;
-        applyEntryKeyboardLift(0, 0);
+        if (els.entryShell) {
+          els.entryShell.scrollTop = 0;
+        }
+        syncEntryViewport();
       }
 
       async function openSettings() {
@@ -1473,9 +1509,9 @@
         showView("settings");
         const appState = await getAppState();
         els.apiKeyInput.value = appState.apiKey || "";
-        els.modelInput.value = appState.modelName || "Qwen/Qwen3-8B";
+        els.settingsModelInput.value = appState.modelName || "Qwen/Qwen3-8B";
         requestAnimationFrame(() => {
-          els.apiKeyInput.focus({ preventScroll: true });
+          els.apiKeyInput.focus();
           els.apiKeyInput.setSelectionRange(els.apiKeyInput.value.length, els.apiKeyInput.value.length);
         });
       }
@@ -1487,7 +1523,7 @@
         els.searchInput.value = "";
         renderSearchResults();
         requestAnimationFrame(() => {
-          els.searchInput.focus({ preventScroll: true });
+          els.searchInput.focus();
         });
       }
 
@@ -1505,9 +1541,6 @@
         if (name !== "search") {
           cancelMeaningRequests();
         }
-        if (name !== "entry") {
-          applyEntryKeyboardLift(0, 0);
-        }
 
         const views = {
           shelf: els.shelfView,
@@ -1520,6 +1553,11 @@
         Object.entries(views).forEach(([key, node]) => {
           node.classList.toggle("active", key === name);
         });
+
+        if (name !== "entry") {
+          state.activeEntryInput = null;
+        }
+        syncEntryViewport();
       }
 
       function renderShelf() {
@@ -1619,6 +1657,8 @@
           return;
         }
 
+        cancelSwipeEnableTimer();
+        closeAllSwipes();
         els.listNotebookTitle.textContent = formatNotebookTitle(notebook);
 
         let rows = state.words.filter((word) => word.notebookId === notebook.id);
@@ -1636,6 +1676,12 @@
           return;
         }
 
+        const pendingHighlightId = typeof state.pendingHighlightWordId === "number"
+          ? state.pendingHighlightWordId
+          : null;
+        const shouldDelaySwipe = pendingHighlightId !== null;
+        const pendingItems = [];
+
         rows.forEach((record) => {
           const item = document.createElement("div");
           item.className = "word-item";
@@ -1643,21 +1689,14 @@
           item.innerHTML = `
             <div class="swipe-actions">
               <button class="row-action edit" type="button" data-action="edit" aria-label="编辑">
-                <svg viewBox="0 0 24 24" fill="none" aria-hidden="true">
-                  <path d="M5 19L8.5 18L18 8.5L14.5 5L5 14.5L4 18.5Z" stroke="currentColor" stroke-width="1.9" stroke-linecap="butt" stroke-linejoin="miter"></path>
-                  <path d="M13.5 6L17 9.5" stroke="currentColor" stroke-width="1.9" stroke-linecap="butt"></path>
-                </svg>
+                <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 20L8.5 19L18.5 9L15 5.5L5 15.5L4 20Z"></path><path d="M13.5 6.5L17.5 10.5"></path></svg>
               </button>
               <button class="row-action delete" type="button" data-action="delete" aria-label="删除">
-                <svg viewBox="0 0 24 24" fill="none" aria-hidden="true">
-                  <path d="M6 8H18" stroke="currentColor" stroke-width="1.9" stroke-linecap="butt"></path>
-                  <path d="M9 8V6H15V8" stroke="currentColor" stroke-width="1.9" stroke-linecap="butt" stroke-linejoin="miter"></path>
-                  <path d="M8 8L8.8 18H15.2L16 8" stroke="currentColor" stroke-width="1.9" stroke-linecap="butt" stroke-linejoin="miter"></path>
-                </svg>
+                <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M6 7H18"></path><path d="M9 7V5H15V7"></path><path d="M8 7L9 19H15L16 7"></path><path d="M10 10V16"></path><path d="M14 10V16"></path></svg>
               </button>
             </div>
             <div class="swipe-content">
-              <div class="list-page">${formatPageDisplay(record.page)}</div>
+              <div class="list-page">${escapeHtml(formatPageNumber(record.page))}</div>
               <div class="list-word ${record.isAnalysis ? "analysis" : ""}">${escapeHtml(record.word)}</div>
             </div>
           `;
@@ -1674,7 +1713,7 @@
             closeAllSwipes();
             const choice = await showDialog({
               title: "删除记录？",
-              text: `${record.word} · p.${record.page}`,
+              text: `${record.word} · p.${formatPageNumber(record.page)}`,
               buttons: [
                 { text: "取消", value: "cancel" },
                 { text: "删除", value: "delete", variant: "dark" }
@@ -1687,30 +1726,43 @@
             }
           });
 
-          setupSwipe(item);
+          if (!shouldDelaySwipe) {
+            setupSwipe(item);
+          } else {
+            pendingItems.push(item);
+          }
+
           els.wordList.appendChild(item);
         });
 
-        if (typeof state.pendingHighlightWordId === "number") {
-          const target = els.wordList.querySelector(
-            `.word-item[data-id="${state.pendingHighlightWordId}"]`
-          );
+        if (pendingHighlightId !== null) {
+          const target = els.wordList.querySelector(`.word-item[data-id="${pendingHighlightId}"]`);
+          state.pendingHighlightWordId = null;
           if (target) {
-            suspendListInteractions(520);
+            state.swipeReadyAt = performance.now() + 760;
             requestAnimationFrame(() => {
-              closeAllSwipes();
-              target.scrollIntoView({ block: "center", behavior: "smooth" });
-              window.setTimeout(() => {
-                closeAllSwipes();
+              const listRect = els.wordList.getBoundingClientRect();
+              const targetRect = target.getBoundingClientRect();
+              const currentTop = els.wordList.scrollTop;
+              const targetTop = currentTop + (targetRect.top - listRect.top) - Math.max(18, (listRect.height - targetRect.height) * 0.34);
+              els.wordList.scrollTo({ top: Math.max(0, targetTop), behavior: "smooth" });
+              cancelSwipeEnableTimer();
+              state.swipeEnableTimer = window.setTimeout(() => {
+                pendingItems.forEach(setupSwipe);
                 target.classList.add("flash-highlight");
                 window.setTimeout(() => {
                   target.classList.remove("flash-highlight");
-                }, 920);
-              }, 160);
+                }, 1300);
+                state.swipeEnableTimer = null;
+              }, 480);
             });
+          } else {
+            pendingItems.forEach(setupSwipe);
           }
-          state.pendingHighlightWordId = null;
+          return;
         }
+
+        state.pendingHighlightWordId = null;
       }
 
       // 全局搜索：在全部笔记本内实时筛选，点击结果后跳转并定位。
@@ -1761,7 +1813,7 @@
 
           const page = document.createElement("div");
           page.className = "search-page";
-          page.textContent = String(result.page);
+          page.textContent = formatPageNumber(result.page);
 
           const body = document.createElement("div");
           body.className = "search-body";
@@ -1787,13 +1839,11 @@
 
           row.addEventListener("click", async () => {
             els.searchInput.blur();
-            suspendListInteractions(520);
-            state.ignoreSwipeUntil = performance.now() + 760;
             await openNotebook(result.notebookId, {
               sortMode: "page",
               filterMode: "all",
               highlightWordId: result.id,
-              fromSearch: true
+              deferSwipeMount: true
             });
           });
           els.searchResults.appendChild(row);
@@ -1811,7 +1861,7 @@
         const apiKey = String(els.apiKeyInput.value || "")
           .trim()
           .replace(/^Bearer\s+/i, "");
-        const modelName = String(els.modelInput.value || "").trim() || "Qwen/Qwen3-8B";
+        const modelName = String(els.settingsModelInput.value || "").trim() || "Qwen/Qwen3-8B";
 
         await saveAppState({ apiKey, modelName });
         const button = els.settingsSaveButton;
@@ -1827,107 +1877,55 @@
       function bindViewportWatch() {
         const viewport = window.visualViewport;
 
-        const scheduleUpdate = (delay = 0) => {
-          if (state.entryViewportTimer) {
-            clearTimeout(state.entryViewportTimer);
-            state.entryViewportTimer = null;
-          }
-          state.entryViewportTimer = window.setTimeout(() => {
-            updateEntryViewport();
-          }, delay);
-        };
-
-        const onViewportChange = () => {
-          if (state.currentView !== "entry") {
-            applyEntryKeyboardLift(0, 0);
-            return;
-          }
-          scheduleUpdate(0);
+        const schedule = () => {
+          requestAnimationFrame(syncEntryViewport);
         };
 
         if (viewport) {
-          viewport.addEventListener("resize", onViewportChange);
-          viewport.addEventListener("scroll", onViewportChange);
+          viewport.addEventListener("resize", schedule);
+          viewport.addEventListener("scroll", schedule);
         }
 
-        window.addEventListener("resize", onViewportChange);
         window.addEventListener("orientationchange", () => {
-          window.setTimeout(() => {
-            state.entryViewportBase = getViewportLayoutHeight();
-            updateEntryViewport();
-          }, 180);
+          window.setTimeout(schedule, 180);
         });
 
-        [els.entryPageInput, els.entryWordInput].forEach((input) => {
-          input.addEventListener("pointerdown", () => {
-            if (!isEntryInput(document.activeElement)) {
-              state.entryViewportBase = getViewportLayoutHeight();
-            }
-            state.entryKeyboardSettlingUntil = performance.now() + 240;
-            applyEntryKeyboardLift(0, 0);
-          }, { passive: true });
-
-          input.addEventListener("focus", () => {
-            state.entryViewportBase = Math.max(state.entryViewportBase || 0, getViewportLayoutHeight());
-            state.entryKeyboardSettlingUntil = performance.now() + 240;
-            applyEntryKeyboardLift(0, 0);
-            scheduleUpdate(260);
-          });
-
-          input.addEventListener("blur", () => {
-            window.setTimeout(() => {
-              if (!isEntryInput(document.activeElement)) {
-                state.entryViewportBase = getViewportLayoutHeight();
-                applyEntryKeyboardLift(0, 0);
-              }
-            }, 50);
-          });
-        });
-
-        updateEntryViewport();
+        window.addEventListener("resize", schedule);
+        schedule();
       }
 
-      function getViewportLayoutHeight() {
+      function syncEntryViewport() {
         const viewport = window.visualViewport;
-        return viewport ? viewport.height + viewport.offsetTop : window.innerHeight;
-      }
+        const viewportTop = viewport ? viewport.offsetTop : 0;
+        const viewportHeight = viewport ? viewport.height : window.innerHeight;
+        const visibleBottom = viewportTop + viewportHeight;
+        const keyboardOffset = Math.max(0, (window.innerHeight || document.documentElement.clientHeight) - visibleBottom);
 
-      function isEntryInput(element) {
-        return element === els.entryPageInput || element === els.entryWordInput;
-      }
+        document.documentElement.style.setProperty("--keyboard-offset", `${keyboardOffset}px`);
 
-      function applyEntryKeyboardLift(lift = 0, offset = 0) {
-        document.documentElement.style.setProperty("--keyboard-lift", `${lift}px`);
-        document.documentElement.style.setProperty("--keyboard-offset", `${offset}px`);
-      }
-
-      function updateEntryViewport() {
-        if (state.currentView !== "entry") {
-          applyEntryKeyboardLift(0, 0);
+        if (state.currentView !== "entry" || !els.entryWrap || !els.entryRow || !els.entryActions) {
+          document.documentElement.style.setProperty("--keyboard-lift", "0px");
           return;
         }
 
-        const layoutHeight = getViewportLayoutHeight();
-        if (!state.entryViewportBase) {
-          state.entryViewportBase = layoutHeight;
+        if (els.entryShell) {
+          els.entryShell.scrollTop = 0;
         }
 
-        const keyboardClosedLike = layoutHeight >= state.entryViewportBase - 54;
-        if (keyboardClosedLike) {
-          state.entryViewportBase = Math.max(state.entryViewportBase, layoutHeight);
+        if (!state.activeEntryInput) {
+          document.documentElement.style.setProperty("--keyboard-lift", "0px");
+          return;
         }
 
-        const keyboardOffset = Math.max(0, state.entryViewportBase - layoutHeight);
-        const active = isEntryInput(document.activeElement);
-        const settling = performance.now() < state.entryKeyboardSettlingUntil;
+        const rowRect = els.entryRow.getBoundingClientRect();
+        const actionsRect = els.entryActions.getBoundingClientRect();
+        const inputRect = state.activeEntryInput.getBoundingClientRect();
+        const desiredBottom = Math.max(actionsRect.bottom, inputRect.bottom, rowRect.bottom);
+        const safeBottom = 18;
+        const overflow = Math.max(0, desiredBottom - (visibleBottom - safeBottom));
+        const lift = overflow > 0 ? -Math.min(120, Math.round(overflow + 4)) : 0;
 
-        let lift = 0;
-        if (active && keyboardOffset > 120) {
-          const target = Math.min(26, Math.max(0, Math.round((keyboardOffset - 120) * 0.12)));
-          lift = settling ? Math.max(-10, -Math.min(10, target)) : -target;
-        }
-
-        applyEntryKeyboardLift(lift, keyboardOffset);
+        document.documentElement.style.setProperty("--keyboard-lift", `${lift}px`);
       }
 
       function cancelMeaningRequests() {
@@ -1953,6 +1951,7 @@
         state.searchMeaningTimer = window.setTimeout(async () => {
           const appState = await getAppState();
           const apiKey = String(appState.apiKey || "").trim();
+          const modelName = String(appState.modelName || "Qwen/Qwen3-8B").trim() || "Qwen/Qwen3-8B";
           if (!apiKey || token !== state.searchMeaningToken || state.currentView !== "search") {
             return;
           }
@@ -1972,7 +1971,7 @@
               if (!wordKey || controller.signal.aborted || token !== state.searchMeaningToken) {
                 return;
               }
-              const meaning = await fetchWordMeaning(wordKey, apiKey, controller.signal);
+              const meaning = await fetchWordMeaning(wordKey, apiKey, modelName, controller.signal);
               if (!meaning || controller.signal.aborted || token !== state.searchMeaningToken) {
                 continue;
               }
@@ -1991,7 +1990,7 @@
         }, 320);
       }
 
-      async function fetchWordMeaning(word, apiKey, signal) {
+      async function fetchWordMeaning(word, apiKey, modelName, signal) {
         if (!word || !apiKey) {
           return "";
         }
@@ -2002,9 +2001,6 @@ v.固着生长
 单词：${word}`;
 
         try {
-          const appState = await getAppState();
-          const modelName = String(appState.modelName || "Qwen/Qwen3-8B").trim() || "Qwen/Qwen3-8B";
-
           const response = await fetch("https://api.siliconflow.cn/v1/chat/completions", {
             method: "POST",
             headers: {
@@ -2012,7 +2008,7 @@ v.固着生长
               Authorization: `Bearer ${apiKey}`
             },
             body: JSON.stringify({
-              model: modelName,
+              model: modelName || "Qwen/Qwen3-8B",
               messages: [{ role: "user", content: prompt }],
               temperature: 0.3
             }),
@@ -2058,8 +2054,8 @@ v.固着生长
         const valid = isValidPage(els.entryPageInput.value) && hasWordValue(els.entryWordInput.value);
         els.entrySaveButton.disabled = !valid;
         els.entrySaveNextButton.disabled = !valid;
-        els.entrySaveButton.classList.toggle("can-save", valid);
-        els.entrySaveNextButton.classList.toggle("can-save", valid);
+        els.entrySaveButton.classList.toggle("ready", valid);
+        els.entrySaveNextButton.classList.toggle("ready", valid);
       }
 
       function updateEditButtons() {
@@ -2099,7 +2095,13 @@ v.固着生长
         updateEntryButtons();
 
         requestAnimationFrame(() => {
-          els.entryWordInput.focus({ preventScroll: true });
+          try {
+            els.entryWordInput.focus({ preventScroll: true });
+          } catch (error) {
+            els.entryWordInput.focus();
+          }
+          state.activeEntryInput = els.entryWordInput;
+          syncEntryViewport();
         });
       }
 
@@ -2108,6 +2110,18 @@ v.固着生长
         window.setTimeout(() => {
           button.classList.remove("flash");
         }, 200);
+      }
+
+      function cancelSwipeEnableTimer() {
+        if (state.swipeEnableTimer) {
+          clearTimeout(state.swipeEnableTimer);
+          state.swipeEnableTimer = null;
+        }
+      }
+
+      function formatPageNumber(value) {
+        const number = Math.max(0, Number(value) || 0);
+        return String(number).padStart(3, "0");
       }
 
       function getCurrentNotebook() {
@@ -2138,27 +2152,13 @@ v.固着生长
         return list.sort((a, b) => b.createdAt - a.createdAt);
       }
 
-      function formatPageDisplay(page) {
-        const numeric = Math.max(0, Number(page) || 0);
-        return String(numeric).padStart(3, "0");
-      }
-
-      function suspendListInteractions(duration = 280) {
-        if (!els.wordList) {
+      // 左滑交互：增加方向锁、速度判断和边缘阻尼，并加上轻微回弹。
+      function setupSwipe(item) {
+        if (item.dataset.swipeBound === "1") {
           return;
         }
-        els.wordList.classList.add("swipe-suspended");
-        if (state.listInteractionTimer) {
-          clearTimeout(state.listInteractionTimer);
-        }
-        state.listInteractionTimer = window.setTimeout(() => {
-          els.wordList.classList.remove("swipe-suspended");
-          state.listInteractionTimer = null;
-        }, duration);
-      }
+        item.dataset.swipeBound = "1";
 
-      // 左滑交互：增加方向锁、速度判断和边缘阻尼，减少误触并提升打开成功率。
-      function setupSwipe(item) {
         const content = item.querySelector(".swipe-content");
         let startX = 0;
         let startY = 0;
@@ -2170,33 +2170,37 @@ v.固着生长
         let lastTime = 0;
         let velocityX = 0;
         let moved = false;
+        let draggedEnough = false;
 
         const getOffset = () => Number(item.dataset.offset || "0");
 
-        const setOffset = (value, withTransition) => {
-          let next = value;
-          if (next > 0) {
-            next *= 0.16;
+        const clamp = (value) => Math.max(-SWIPE_WIDTH, Math.min(0, value));
+
+        const visualOffset = (value) => {
+          if (value > 0) {
+            return value * 0.22;
           }
-          if (next < -SWIPE_WIDTH) {
-            next = -SWIPE_WIDTH + (next + SWIPE_WIDTH) * 0.2;
+          if (value < -SWIPE_WIDTH) {
+            return -SWIPE_WIDTH + (value + SWIPE_WIDTH) * 0.24;
           }
-          if (withTransition) {
-            next = Math.max(-SWIPE_WIDTH, Math.min(0, next));
-          }
-          item.dataset.offset = String(next);
-          content.style.transition = withTransition ? "transform 180ms ease" : "none";
-          content.style.transform = `translateX(${next}px)`;
+          return value;
+        };
+
+        const setOffset = (value, withTransition = false, elastic = false) => {
+          const clamped = clamp(value);
+          item.dataset.offset = String(clamped);
+          content.style.transition = withTransition
+            ? "transform 240ms cubic-bezier(0.25, 1.5, 0.5, 1)"
+            : "none";
+          content.style.transform = `translateX(${elastic ? visualOffset(value) : clamped}px)`;
         };
 
         const finish = (target) => {
-          item.dataset.offset = String(target);
-          content.style.transition = "transform 180ms ease";
-          content.style.transform = `translateX(${target}px)`;
+          setOffset(target, true, false);
         };
 
         content.addEventListener("pointerdown", (event) => {
-          if (performance.now() < state.ignoreSwipeUntil || els.wordList.classList.contains("swipe-suspended")) {
+          if (performance.now() < state.swipeReadyAt) {
             return;
           }
           if (event.pointerType === "mouse" && event.button !== 0) {
@@ -2209,6 +2213,7 @@ v.固着生长
           closeAllSwipes(item);
           dragging = true;
           moved = false;
+          draggedEnough = false;
           pointerId = event.pointerId;
           axis = null;
           startX = event.clientX;
@@ -2233,10 +2238,19 @@ v.固着生长
           const deltaY = event.clientY - startY;
 
           if (!axis) {
-            if (Math.abs(deltaX) < 5 && Math.abs(deltaY) < 5) {
+            const absX = Math.abs(deltaX);
+            const absY = Math.abs(deltaY);
+            if (absX < 7 && absY < 7) {
               return;
             }
-            axis = Math.abs(deltaX) > Math.abs(deltaY) * 1.18 ? "x" : "y";
+            if (absX > absY + 5 && absX > 8) {
+              axis = "x";
+            } else if (absY > absX + 5 && absY > 8) {
+              axis = "y";
+              return;
+            } else {
+              return;
+            }
           }
 
           if (axis !== "x") {
@@ -2244,13 +2258,14 @@ v.固着生长
           }
 
           moved = true;
+          draggedEnough = draggedEnough || Math.abs(deltaX) > 10;
           event.preventDefault();
           const now = performance.now();
-          const dt = Math.max(16, now - lastTime);
+          const dt = Math.max(12, now - lastTime);
           velocityX = (event.clientX - lastX) / dt;
           lastX = event.clientX;
           lastTime = now;
-          setOffset(startOffset + deltaX, false);
+          setOffset(startOffset + deltaX, false, true);
         });
 
         const endDrag = (event) => {
@@ -2272,8 +2287,8 @@ v.固着生长
           }
 
           const offset = getOffset();
-          const shouldOpen = offset < -SWIPE_WIDTH * 0.34 || velocityX < -0.26;
-          const shouldClose = offset > -SWIPE_WIDTH * 0.16 || velocityX > 0.24;
+          const shouldOpen = offset < -SWIPE_WIDTH * 0.36 || velocityX < -0.28;
+          const shouldClose = offset > -SWIPE_WIDTH * 0.18 || velocityX > 0.24;
           finish(shouldOpen && !shouldClose ? -SWIPE_WIDTH : 0);
 
           pointerId = null;
@@ -2284,15 +2299,14 @@ v.固着生长
         content.addEventListener("pointercancel", endDrag);
 
         content.addEventListener("click", (event) => {
-          if (performance.now() < state.ignoreSwipeUntil || els.wordList.classList.contains("swipe-suspended")) {
+          if (draggedEnough) {
+            draggedEnough = false;
+            moved = false;
             event.preventDefault();
             event.stopPropagation();
             return;
           }
-          if (moved) {
-            moved = false;
-            return;
-          }
+          moved = false;
           const offset = getOffset();
           if (offset < -8) {
             event.preventDefault();
@@ -2311,7 +2325,7 @@ v.固着生长
           if (content) {
             item.dataset.offset = "0";
             content.style.transform = "translateX(0)";
-            content.style.transition = "transform 180ms ease";
+            content.style.transition = "transform 240ms cubic-bezier(0.25, 1.5, 0.5, 1)";
           }
         });
       }
