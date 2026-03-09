@@ -832,6 +832,12 @@
       transform: translateY(1px);
     }
 
+    .settings-divider {
+      height: 1px;
+      background: var(--line);
+      margin: 24px 0 8px;
+    }
+
     .modal-overlay {
       position: fixed;
       inset: 0;
@@ -1106,6 +1112,11 @@
 Provider: OpenAI 兼容
 默认模型: Qwen/Qwen3-8B</div>
           <button id="settingsSaveButton" class="settings-save-button" type="button">保存</button>
+          <div class="settings-divider"></div>
+          <div class="settings-label">数据管理</div>
+          <button id="exportDataButton" class="settings-save-button" type="button">导出数据</button>
+          <button id="importDataButton" class="settings-save-button" type="button">导入数据</button>
+          <input id="importFileInput" type="file" accept=".json" style="display:none" />
         </div>
       </div>
     </section>
@@ -1255,6 +1266,9 @@ Provider: OpenAI 兼容
         els.apiKeyInput = document.getElementById("apiKeyInput");
         els.modelInput = document.getElementById("modelInput");
         els.settingsSaveButton = document.getElementById("settingsSaveButton");
+        els.exportDataButton = document.getElementById("exportDataButton");
+        els.importDataButton = document.getElementById("importDataButton");
+        els.importFileInput = document.getElementById("importFileInput");
 
         els.backToShelfButton = document.getElementById("backToShelfButton");
         els.addWordButton = document.getElementById("addWordButton");
@@ -1347,6 +1361,13 @@ Provider: OpenAI 兼容
         els.openSettingsButton.addEventListener("click", openSettings);
         els.settingsBackButton.addEventListener("click", openShelf);
         els.settingsSaveButton.addEventListener("click", saveSettings);
+        els.exportDataButton.addEventListener("click", exportData);
+        els.importDataButton.addEventListener("click", () => els.importFileInput.click());
+        els.importFileInput.addEventListener("change", (e) => {
+          const file = e.target.files[0];
+          if (file) importData(file);
+          e.target.value = "";
+        });
 
         els.backToShelfButton.addEventListener("click", () => {
           openShelf();
@@ -1938,6 +1959,72 @@ Provider: OpenAI 兼容
           button.textContent = prevText;
           button.disabled = false;
         }, 900);
+      }
+
+      async function exportData() {
+        const notebooks = await getAllRecords("notebooks");
+        const words = await getAllRecords("words");
+        const appStateData = await getAppState();
+
+        const data = {
+          version: 1,
+          exportedAt: new Date().toISOString(),
+          notebooks,
+          words,
+          appState: appStateData
+        };
+
+        const blob = new Blob([JSON.stringify(data, null, 2)], { type: "application/json" });
+        const url = URL.createObjectURL(blob);
+        const a = document.createElement("a");
+        const date = new Date().toISOString().slice(0, 10);
+        a.href = url;
+        a.download = `pagefinder-backup-${date}.json`;
+        a.click();
+        URL.revokeObjectURL(url);
+      }
+
+      async function importData(file) {
+        let data;
+        try {
+          const text = await file.text();
+          data = JSON.parse(text);
+        } catch {
+          await showDialog({ title: "文件格式错误", text: "无法解析所选文件，请选择有效的 JSON 备份文件。" });
+          return;
+        }
+
+        if (!data || !Array.isArray(data.notebooks) || !Array.isArray(data.words) || !data.appState) {
+          await showDialog({ title: "文件格式错误", text: "文件内容不符合备份格式要求。" });
+          return;
+        }
+
+        const choice = await showDialog({
+          title: "确认导入",
+          text: "导入将清空当前所有数据并替换为备份文件中的数据，确认继续？",
+          buttons: [
+            { text: "取消", value: "cancel" },
+            { text: "确认导入", value: "import", variant: "dark" }
+          ]
+        });
+        if (choice !== "import") return;
+
+        const clearStoreData = (storeName) =>
+          requestToPromise(getStore(storeName, "readwrite").clear());
+
+        await clearStoreData("notebooks");
+        await clearStoreData("words");
+        await clearStoreData("appState");
+
+        for (const nb of data.notebooks) {
+          await putRecord("notebooks", nb);
+        }
+        for (const w of data.words) {
+          await putRecord("words", w);
+        }
+        await putRecord("appState", { ...data.appState, id: APP_STATE_ID });
+
+        window.location.reload();
       }
 
       function bindEntryViewportWatch() {
