@@ -1019,6 +1019,14 @@
               <rect x="4" y="4" width="16" height="16" fill="currentColor"></rect>
             </svg>
           </button>
+          <button id="sortReverseButton" class="mode-button" type="button" data-mode="reverse" aria-label="倒序">
+            <svg viewBox="0 0 24 24" fill="none" aria-hidden="true">
+              <path d="M7 2.5V14.5" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"></path>
+              <path d="M3 6.5L7 2.5L11 6.5" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"></path>
+              <path d="M17 9.5V21.5" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"></path>
+              <path d="M13 17.5L17 21.5L21 17.5" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"></path>
+            </svg>
+          </button>
         </div>
 
         <div id="wordList" class="word-list"></div>
@@ -1204,6 +1212,7 @@ Provider: OpenAI 兼容
         currentView: "shelf",
         currentNotebookId: null,
         sortMode: "page",
+        sortReversed: false,
         filterMode: "mainOnly",
         searchOrigin: "shelf",
         pendingHighlightWordId: null,
@@ -1288,6 +1297,7 @@ Provider: OpenAI 兼容
         els.sortTimeButton = document.getElementById("sortTimeButton");
         els.filterAllButton = document.getElementById("filterAllButton");
         els.filterMainButton = document.getElementById("filterMainButton");
+        els.sortReverseButton = document.getElementById("sortReverseButton");
 
         els.modalOverlay = document.getElementById("modalOverlay");
         els.modalTitle = document.getElementById("modalTitle");
@@ -1443,13 +1453,27 @@ Provider: OpenAI 兼容
             const value = button.dataset.value;
             if (mode === "sort") {
               state.sortMode = value;
+            } else if (mode === "reverse") {
+              state.sortReversed = !state.sortReversed;
             } else {
+              // Filter mode: preserve scroll position
+              const anchorWordId = getVisibleCenterWordId();
               state.filterMode = value;
+              updateModeButtons();
+              await saveAppState({
+                lastNotebookId: state.currentNotebookId,
+                lastSortMode: state.sortMode,
+                lastSortReversed: state.sortReversed,
+                lastFilterMode: state.filterMode
+              });
+              renderList({ preserveAnchor: anchorWordId });
+              return;
             }
             updateModeButtons();
             await saveAppState({
               lastNotebookId: state.currentNotebookId,
               lastSortMode: state.sortMode,
+              lastSortReversed: state.sortReversed,
               lastFilterMode: state.filterMode
             });
             renderList();
@@ -1500,6 +1524,7 @@ Provider: OpenAI 兼容
       async function restoreApp() {
         const appState = await getAppState();
         state.sortMode = appState.lastSortMode || "page";
+        state.sortReversed = !!appState.lastSortReversed;
         state.filterMode = appState.lastFilterMode || "mainOnly";
         updateModeButtons();
 
@@ -1528,6 +1553,7 @@ Provider: OpenAI 兼容
         await saveAppState({
           lastNotebookId: null,
           lastSortMode: state.sortMode,
+          lastSortReversed: state.sortReversed,
           lastFilterMode: state.filterMode
         });
       }
@@ -1560,6 +1586,7 @@ Provider: OpenAI 兼容
         await saveAppState({
           lastNotebookId: notebookId,
           lastSortMode: state.sortMode,
+          lastSortReversed: state.sortReversed,
           lastFilterMode: state.filterMode
         });
       }
@@ -1725,8 +1752,25 @@ Provider: OpenAI 兼容
         }
       }
 
+      function getVisibleCenterWordId() {
+        const listEl = els.wordList;
+        const centerY = listEl.scrollTop + listEl.clientHeight / 2;
+        const items = listEl.querySelectorAll(".word-item");
+        let closest = null;
+        let closestDist = Infinity;
+        items.forEach((item) => {
+          const mid = item.offsetTop + item.offsetHeight / 2;
+          const dist = Math.abs(mid - centerY);
+          if (dist < closestDist) {
+            closestDist = dist;
+            closest = item;
+          }
+        });
+        return closest ? Number(closest.dataset.id) : null;
+      }
+
       // 根据当前笔记本、排序方式、筛选方式渲染列表。
-      function renderList() {
+      function renderList(options = {}) {
         const notebook = getCurrentNotebook();
         cancelListEffects();
         if (!notebook) {
@@ -1743,10 +1787,15 @@ Provider: OpenAI 兼容
         }
 
         rows = sortWords(rows, state.sortMode);
+        if (state.sortReversed) {
+          rows.reverse();
+        }
 
         els.wordList.innerHTML = "";
         closeAllSwipes();
-        els.wordList.scrollTop = 0;
+        if (!options.preserveAnchor) {
+          els.wordList.scrollTop = 0;
+        }
         state.listSwipeGuardUntil = 0;
 
         if (!rows.length) {
@@ -1808,6 +1857,14 @@ Provider: OpenAI 兼容
           }
           els.wordList.appendChild(item);
         });
+
+        if (options.preserveAnchor) {
+          const anchorEl = els.wordList.querySelector(`.word-item[data-id="${options.preserveAnchor}"]`);
+          if (anchorEl) {
+            const listHeight = els.wordList.clientHeight || 0;
+            els.wordList.scrollTop = Math.max(0, anchorEl.offsetTop - Math.round(listHeight / 2));
+          }
+        }
 
         if (deferSwipeMount) {
           const targetId = state.pendingHighlightWordId;
@@ -2218,7 +2275,8 @@ v.固着生长
           [els.sortAlphaButton, state.sortMode === "alpha"],
           [els.sortTimeButton, state.sortMode === "time"],
           [els.filterAllButton, state.filterMode === "all"],
-          [els.filterMainButton, state.filterMode === "mainOnly"]
+          [els.filterMainButton, state.filterMode === "mainOnly"],
+          [els.sortReverseButton, state.sortReversed]
         ].forEach(([button, active]) => {
           button.classList.toggle("active", active);
         });
