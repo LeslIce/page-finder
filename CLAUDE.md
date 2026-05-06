@@ -25,7 +25,7 @@ Approximate breakdown:
 - **IndexedDB** (`VocabNotebook` database, version 1) for persistent client-side storage
 - **Pure CSS3** with CSS Grid, Flexbox, and CSS variables (mint color palette)
 - **PWA** capabilities via dynamically generated manifest and app icons from inline SVG
-- **OpenAI-compatible API** integration (Silicon Flow / Qwen3-8B) for optional word definitions
+- **OpenAI-compatible API** integration (DeepSeek / deepseek-v4-flash) for optional word definitions
 
 ### Key Architectural Patterns
 
@@ -129,7 +129,7 @@ Defined in `:root`:
 - `importData(file)` — Import JSON backup, clears all stores, reloads page
 
 **API:**
-- `fetchWordMeaning(word, apiKey, modelName, signal)` — Call Silicon Flow API with AbortSignal
+- `fetchWordMeaning(word, apiKey, modelName, signal)` — Call DeepSeek OpenAI-compatible API with AbortSignal
 - `scheduleSearchMeanings(query, meaningTargets, token)` — Debounced concurrent meaning lookups (320ms delay)
 - `cancelMeaningRequests()` — Abort in-flight API calls and clear timers
 
@@ -143,8 +143,8 @@ Defined in `:root`:
 
 ### API Integration
 
-- **Endpoint:** `https://api.siliconflow.cn/v1/chat/completions`
-- **Default model:** `Qwen/Qwen3-8B` (user-configurable in settings)
+- **Endpoint:** `https://api.deepseek.com/chat/completions`
+- **Default model:** `deepseek-v4-flash` (user-configurable in settings)
 - **Auth:** Bearer token via `Authorization` header
 - **Temperature:** 0.3
 - **Cancellation:** `AbortController` + numeric `searchMeaningToken` (incremented per query; old responses ignored)
