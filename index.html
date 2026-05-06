@@ -1113,12 +1113,12 @@
             autocorrect="off"
             spellcheck="false"
             autocomplete="off"
-            placeholder="Qwen/Qwen3-8B"
+            placeholder="deepseek-v4-flash"
             aria-label="模型名称"
           />
-          <div class="settings-hint">Base URL: https://api.siliconflow.cn/v1
+          <div class="settings-hint">Base URL: https://api.deepseek.com
 Provider: OpenAI 兼容
-默认模型: Qwen/Qwen3-8B</div>
+默认模型: deepseek-v4-flash</div>
           <button id="settingsSaveButton" class="settings-save-button" type="button">保存</button>
           <div class="settings-divider"></div>
           <div class="settings-label">数据管理</div>
@@ -1202,6 +1202,9 @@ Provider: OpenAI 兼容
       const DB_NAME = "VocabNotebook";
       const DB_VERSION = 1;
       const APP_STATE_ID = "main";
+      const AI_API_BASE_URL = "https://api.deepseek.com";
+      const DEFAULT_MODEL_NAME = "deepseek-v4-flash";
+      const LEGACY_DEFAULT_MODEL_NAME = "Qwen/Qwen3-8B";
       const MAX_NOTEBOOKS = 30;
       const SWIPE_WIDTH = 120;
 
@@ -1610,7 +1613,7 @@ Provider: OpenAI 兼容
         showView("settings");
         const appState = await getAppState();
         els.apiKeyInput.value = appState.apiKey || "";
-        els.modelInput.value = appState.modelName || "Qwen/Qwen3-8B";
+        els.modelInput.value = appState.modelName || DEFAULT_MODEL_NAME;
         requestAnimationFrame(() => {
           els.apiKeyInput.focus();
           els.apiKeyInput.setSelectionRange(els.apiKeyInput.value.length, els.apiKeyInput.value.length);
@@ -2005,7 +2008,7 @@ Provider: OpenAI 兼容
         const apiKey = String(els.apiKeyInput.value || "")
           .trim()
           .replace(/^Bearer\s+/i, "");
-        const modelName = String(els.modelInput.value || "").trim() || "Qwen/Qwen3-8B";
+        const modelName = String(els.modelInput.value || "").trim() || DEFAULT_MODEL_NAME;
 
         await saveAppState({ apiKey, modelName });
         const button = els.settingsSaveButton;
@@ -2182,7 +2185,7 @@ Provider: OpenAI 兼容
         state.searchMeaningTimer = window.setTimeout(async () => {
           const appState = await getAppState();
           const apiKey = String(appState.apiKey || "").trim();
-          const modelName = String(appState.modelName || "Qwen/Qwen3-8B").trim() || "Qwen/Qwen3-8B";
+          const modelName = String(appState.modelName || DEFAULT_MODEL_NAME).trim() || DEFAULT_MODEL_NAME;
           if (!apiKey || token !== state.searchMeaningToken || state.currentView !== "search") {
             return;
           }
@@ -2232,14 +2235,14 @@ v.固着生长
 单词：${word}`;
 
         try {
-          const response = await fetch("https://api.siliconflow.cn/v1/chat/completions", {
+          const response = await fetch(`${AI_API_BASE_URL}/chat/completions`, {
             method: "POST",
             headers: {
               "Content-Type": "application/json",
               Authorization: `Bearer ${apiKey}`
             },
             body: JSON.stringify({
-              model: modelName || "Qwen/Qwen3-8B",
+              model: modelName || DEFAULT_MODEL_NAME,
               messages: [{ role: "user", content: prompt }],
               temperature: 0.3
             }),
@@ -2792,31 +2795,33 @@ v.固着生长
         return requestToPromise(getStore(storeName, "readwrite").delete(key));
       }
 
+      function normalizeAppState(appState) {
+        const normalized = appState || {
+          id: APP_STATE_ID,
+          lastNotebookId: null,
+          lastSortMode: "page",
+          lastFilterMode: "mainOnly",
+          apiKey: "",
+          modelName: DEFAULT_MODEL_NAME
+        };
+
+        if (!normalized.modelName || normalized.modelName === LEGACY_DEFAULT_MODEL_NAME) {
+          return { ...normalized, modelName: DEFAULT_MODEL_NAME };
+        }
+
+        return normalized;
+      }
+
       async function ensureAppState() {
         const current = await getRecord("appState", APP_STATE_ID);
-        if (!current) {
-          await putRecord("appState", {
-            id: APP_STATE_ID,
-            lastNotebookId: null,
-            lastSortMode: "page",
-            lastFilterMode: "mainOnly",
-            apiKey: "",
-            modelName: "Qwen/Qwen3-8B"
-          });
+        const normalized = normalizeAppState(current);
+        if (!current || current.modelName !== normalized.modelName) {
+          await putRecord("appState", normalized);
         }
       }
 
       async function getAppState() {
-        return (
-          (await getRecord("appState", APP_STATE_ID)) || {
-            id: APP_STATE_ID,
-            lastNotebookId: null,
-            lastSortMode: "page",
-            lastFilterMode: "mainOnly",
-            apiKey: "",
-            modelName: "Qwen/Qwen3-8B"
-          }
-        );
+        return normalizeAppState(await getRecord("appState", APP_STATE_ID));
       }
 
       async function saveAppState(patch) {
